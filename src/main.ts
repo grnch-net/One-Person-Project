@@ -1,9 +1,26 @@
-console.info('%c Version: 8 ', 'background: #232627; color: #bada55');
+console.info('%c Version: 21 ', 'background: #232627; color: #bada55');
 
 import { SceneSVG } from "./ave/scene/scene-svg";
+import { Animator } from "./ave/animator/animator";
 
 let scene = new SceneSVG({ width: 800, height: 600});
-console.log(scene);
+let group = scene.animator.createGroup();
+scene.animator.timeout(()=>{
+	group.add(1000, {
+		onStart: ()=>{console.log('1')},
+		onComplete: ()=>{console.log('2')}
+	}).add(1000, {
+		delay: 1000,
+		onStart: ()=>{console.log('3')},
+		onComplete: ()=>{console.log('4')}
+	}).add(1000, {
+		onStart: ()=>{console.log('5')},
+		onComplete: ()=>{console.log('6')}
+	});
 
+	scene.animator.timeout(()=>{
+		scene.animator.removeGroup(group);
+		console.log('4');
+	}, 2500);
 
-document.querySelector('#client-status').innerHTML = 'Done';
+}, 1000);

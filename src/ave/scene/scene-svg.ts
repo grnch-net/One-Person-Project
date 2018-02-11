@@ -1,8 +1,16 @@
 import { SceneAbstract, ISceneAbstractParameters } from './scene-abstract';
-import { ISceneSVG } from "./i-scene-svg";
 import { Animator } from "./../animator/animator";
 import { easyHTML } from "../../utils/easy-html";
 import { easyEvent } from "../../utils/easy-event";
+
+export interface ISceneSVG {
+	newChildIndex: Object;
+	children: { [key: string]: any };
+	animator: Animator;
+	// world: GraphicGroup;
+
+	getHierarchy(): Object;
+}
 
 // TODO: create and change this(let ave) to config
 let ave = { config: { type: {
@@ -16,11 +24,10 @@ let ave = { config: { type: {
 export class SceneSVG extends SceneAbstract implements ISceneSVG {
 	public newChildIndex: Object;
 	public children: { [key: string]: any } = {};
+	public animator: Animator;
 	// public world: GraphicGroup;
 
-	protected animator: Animator;
 	// protected prefabs: Prefabs;
-
 
 	constructor(parameters: ISceneAbstractParameters) {
 		super(parameters);

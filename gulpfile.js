@@ -12,41 +12,41 @@ gulp.task("copy-html", function () {
 });
 
 // ------- WATCHIFY
-// var watchify = require("watchify");
-// var gutil = require("gulp-util");
-//
-// var watchedBrowserify = watchify(browserify({
-//     basedir: '.',
-//     debug: true,
-//     entries: ['src/main.ts'],
-//     cache: {},
-//     packageCache: {}
-// }).plugin(tsify));
-//
-//
-// function bundle() {
-//     return watchedBrowserify
-//         .bundle()
-//         .pipe(source('bundle.js'))
-//         .pipe(gulp.dest("dist"));
-// }
-//
-// gulp.task("default", ["copy-html"], bundle);
-// watchedBrowserify.on("update", bundle);
-// watchedBrowserify.on("log", gutil.log);
+var watchify = require("watchify");
+var gutil = require("gulp-util");
+
+var watchedBrowserify = watchify(browserify({
+    basedir: '.',
+    debug: true,
+    entries: ['src/main.ts'],
+    cache: {},
+    packageCache: {}
+}).plugin(tsify));
+
+
+function bundle() {
+    return watchedBrowserify
+        .bundle()
+        .pipe(source('bundle.js'))
+        .pipe(gulp.dest("dist"));
+}
+
+gulp.task("default", ["copy-html"], bundle);
+watchedBrowserify.on("update", bundle);
+watchedBrowserify.on("log", gutil.log);
 
 
 // ------- Browserify
-gulp.task("default", ["copy-html"], function () {
-    return browserify({
-        basedir: '.',
-        debug: true,
-        entries: ['src/main.ts'],
-        cache: {},
-        packageCache: {}
-    })
-    .plugin(tsify)
-    .bundle()
-    .pipe(source('bundle.js'))
-    .pipe(gulp.dest("dist"));
-});
+// gulp.task("default", ["copy-html"], function () {
+//     return browserify({
+//         basedir: '.',
+//         debug: true,
+//         entries: ['src/main.ts'],
+//         cache: {},
+//         packageCache: {}
+//     })
+//     .plugin(tsify)
+//     .bundle()
+//     .pipe(source('bundle.js'))
+//     .pipe(gulp.dest("dist"));
+// });
