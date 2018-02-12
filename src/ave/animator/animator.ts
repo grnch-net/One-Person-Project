@@ -7,7 +7,6 @@ import { isUndefined } from "./../../utils/easy-check";
 export interface IAnimator {
 	active: boolean;
 	update(nowTime: number): void;
-	add(time: number, parameters: IAddParameters): AnimationModel;
 	createGroup(active?: boolean): AnimationGroup;
 }
 
@@ -28,9 +27,7 @@ export class Animator extends AnimationAbstract implements IAnimator {
 		requestAnimationFrame(this.update.bind(this));
 	}
 
-	get active(): boolean {
-		return this._active;
-	}
+	get active(): boolean { return this._active; }
 
 	set active(value: boolean) {
 		if (value == this._active) return;
@@ -52,12 +49,6 @@ export class Animator extends AnimationAbstract implements IAnimator {
 		super.update(frameTime);
 
 		requestAnimationFrame(this.update.bind(this));
-	}
-
-	public add(time: number = 0, parameters: IAddParameters): AnimationModel {
-		let model: AnimationModel = super.add(time, parameters);
-		model.parent = this;
-		return model;
 	}
 
 	public createGroup(active: boolean = true): AnimationGroup {

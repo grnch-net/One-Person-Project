@@ -7,7 +7,6 @@ export interface IAnimationGroup {
 	active: boolean;
 	delay?: number;
 	_canRemove: boolean;
-	add(time: number, parameters: IAddParameters): AnimationModel;
 	createGroup(active?: boolean): AnimationGroup;
 }
 
@@ -31,12 +30,6 @@ export class AnimationGroup extends AnimationAbstract implements IAnimationGroup
 	public createGroup(active: boolean = true): AnimationGroup {
 		let group =  new AnimationGroup({ active: active });
 		return this.addGroup(group);
-	}
-
-	public add(time: number = 0, parameters: IAddParameters): AnimationModel {
-		let model: AnimationModel = super.add(time, parameters);
-		model.parent = this;
-		return model;
 	}
 
 }

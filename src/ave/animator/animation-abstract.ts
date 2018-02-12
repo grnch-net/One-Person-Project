@@ -20,6 +20,7 @@ export abstract class AnimationAbstract implements IAnimationAbstract {
 		}
 
 		this.stack.push(model);
+		model.parent = this;
 
 		return model;
 	}
