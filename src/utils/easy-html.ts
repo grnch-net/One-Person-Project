@@ -37,7 +37,7 @@ export let easyHTML: IEasyHTML = {
 
         }
 
-		if (parameters.parent.appendChild) {
+		if (parameters.parent) {
 			parameters.parent.appendChild(htmlElement);
 		}
 

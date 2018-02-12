@@ -2,12 +2,13 @@ import { SceneAbstract, ISceneAbstractParameters } from './scene-abstract';
 import { Animator } from "./../animator/animator";
 import { easyHTML } from "../../utils/easy-html";
 import { easyEvent } from "../../utils/easy-event";
+import { WorldSVG } from "./../graphic/world-svg";
 
 export interface ISceneSVG {
 	newChildIndex: Object;
 	children: { [key: string]: any };
 	animator: Animator;
-	// world: GraphicGroup;
+	world: WorldSVG;
 
 	getHierarchy(): Object;
 }
@@ -25,7 +26,7 @@ export class SceneSVG extends SceneAbstract implements ISceneSVG {
 	public newChildIndex: Object;
 	public children: { [key: string]: any } = {};
 	public animator: Animator;
-	// public world: GraphicGroup;
+	public world: WorldSVG;
 
 	// protected prefabs: Prefabs;
 
@@ -101,18 +102,10 @@ export class SceneSVG extends SceneAbstract implements ISceneSVG {
 	}
 
 	protected createWorld(): void {
-        // this.world = new ave.GraphicGroup({
-        //     scene: this,
-        //     _type: ave.config.type.WORLD,
-        //     name: 'world',
-        //     position: {
-        //         x: this.scene_width / 2,
-        //         y: this.scene_height / 2
-        //     },
-		// 	scale: {}
-        // });
-        //
-        // this.element.appendChild(this.world.element);
+        this.world = new WorldSVG();
+		this.world.position.set(this.scene_width / 2, this.scene_height / 2);
+
+        this.element.appendChild(this.world.element);
     }
 
 	protected initEvents(): void {
