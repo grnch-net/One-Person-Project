@@ -7,19 +7,19 @@ interface IWorldSVG {
 }
 
 // TODO: extends mix GraphicGroupSVG
-export class WorldSVG extends GraphicGroupSVG implements IWorldAbstract, IWorldSVG {
+export class WorldSVG extends classMix(GraphicGroupSVG, WorldAbstract) implements IWorldAbstract, IWorldSVG {
 	public readonly parent: GraphicObject;
 
 	constructor() {
 		super();
 	}
 }
-applyMixins(WorldSVG, [WorldAbstract]);
 
-function applyMixins(derivedCtor: any, baseCtors: any[]) {
-    baseCtors.forEach(baseCtor => {
-        Object.getOwnPropertyNames(baseCtor.prototype).forEach(name => {
-            derivedCtor.prototype[name] = baseCtor.prototype[name];
-        });
-    });
+function classMix(parentClass: any, objectInterfaces: any) {
+    let newClass = class extends parentClass { };
+    let mix = (objectInterface: any) => Object.getOwnPropertyNames(objectInterface.prototype)
+	.forEach(name => { newClass.prototype[name] = objectInterface.prototype[name]; });
+    if (Array.isArray(objectInterfaces)) objectInterfaces.forEach(mix);
+    else mix(objectInterfaces);
+    return newClass;
 }
