@@ -8,10 +8,10 @@ export interface IGraphicGroupAbstract {
 
 export abstract class GraphicGroupAbstract extends GraphicObject implements IGraphicGroupAbstract {
 
-	public addChild(element: any, index: number): number {
-		if (!isUndefined(element.parent)) element.parent.removeChild(element);
+	public addChild(element: any, index: number = null): number {
+		if (element.parent) element.parent.removeChild(element);
 
-		if (!isUndefined(index) && index < this.children.length)
+		if (index !== null && index < this.children.length)
 			this.children.splice(index, 0, element);
 		else
 			this.children.push(element);

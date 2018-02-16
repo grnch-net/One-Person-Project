@@ -103,9 +103,9 @@ export class SceneSVG extends SceneAbstract implements ISceneSVG {
 
 	protected createWorld(): void {
         this.world = new WorldSVG();
-		this.world.position.set(this.scene_width / 2, this.scene_height / 2);
+		// this.world.position.set(this.scene_width / 2, this.scene_height / 2);
 
-        this.element.appendChild(this.world.element);
+        // this.element.appendChild(this.world.element);
     }
 
 	protected initEvents(): void {

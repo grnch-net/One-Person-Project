@@ -7,9 +7,9 @@ interface IPoint {
 }
 
 export class Point implements IPoint {
-	public x: number = 0;
-	public y: number = 0;
-	public z: number = 0;
+	public x: number;
+	public y: number;
+	public z: number;
 
 	constructor(
 		public update: Function = null,
@@ -21,7 +21,10 @@ export class Point implements IPoint {
 			this.x = _x;
 			this.y = _y;
 			this.z = _z;
-			update = ()=>{};
+			delete this._x;
+			delete this._y;
+			delete this._z;
+			delete this.update;
 		} else {
 			Object.defineProperty(this, 'x', {
 				get: (): number => { return this._x },

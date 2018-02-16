@@ -6,12 +6,10 @@ interface IWorldSVG {
 
 }
 
-// TODO: extends mix GraphicGroupSVG
 export class WorldSVG extends classMix(GraphicGroupSVG, WorldAbstract) implements IWorldAbstract, IWorldSVG {
-	public readonly parent: GraphicObject;
-
 	constructor() {
 		super();
+		delete this.parent;
 	}
 }
 
