@@ -1,9 +1,16 @@
-interface IPoint {
+interface IPoint extends IVector3d {
+	update: Function;
+	set(x: number, y: number, z?: number): Point;
+	rotate(x: number, y: number, z?: number): Point;
+	scale(x: number, y: number, z?: number): Point;
+	move(x: number, y: number, z?: number): Point;
+	copy(point: IVector3d): Point;
+}
+
+export interface IVector3d {
 	x: number;
 	y: number;
 	z: number;
-	update: Function;
-	set(x: number, y: number, z?: number): void;
 }
 
 export class Point implements IPoint {
@@ -28,19 +35,20 @@ export class Point implements IPoint {
 		} else {
 			Object.defineProperty(this, 'x', {
 				get: (): number => { return this._x },
-				set: (value: number) => { this._x = value; this.update(); }
+				set: (value: number) => { this._x = value; this.update(this); }
 			});
 			Object.defineProperty(this, 'y', {
 				get: (): number => { return this._y },
-				set: (value: number) => { this._y = value; this.update(); }
+				set: (value: number) => { this._y = value; this.update(this); }
 			});
 			Object.defineProperty(this, 'z', {
 				get: (): number => { return this._z },
-				set: (value: number) => { this._z = value; this.update(); }
+				set: (value: number) => { this._z = value; this.update(this); }
 			});
 			this.set = this.setAndUpdate;
 			this.rotate = this.rotateAndUpdate;
 			this.scale = this.scaleAndUpdate;
+			this.copy = this.copyAndUpdate;
 		}
 	}
 
@@ -48,7 +56,7 @@ export class Point implements IPoint {
 		this._x = x;
 		this._y = y;
 		if (z !== null) this._z = z;
-		this.update();
+		this.update(this);
 		return this;
 	}
 
@@ -75,7 +83,7 @@ export class Point implements IPoint {
 			this._z = axisX[0];
 			this._y = axisX[1];
 		}
-		this.update();
+		this.update(this);
 		return this;
 	}
 
@@ -108,33 +116,48 @@ export class Point implements IPoint {
 		];
 	}
 
-	protected scaleAndUpdate(x: number = 1, y:number = 1, z: number = 1): Point {
+	protected scaleAndUpdate(x: number = 1, y: number = 1, z: number = 1): Point {
 		this._x *= x;
 		this._y *= y;
 		this._z *= z;
-		this.update();
+		this.update(this);
 		return this;
 	}
 
-	public scale(x: number = 1, y:number = 1, z: number = 1): Point {
+	public scale(x: number = 1, y: number = 1, z: number = 1): Point {
 		this.x *= x;
 		this.y *= y;
 		this.z *= z;
 		return this;
 	}
 
-	protected moveAndUpdate(x: number = 0, y:number = 0, z: number = 0): Point {
+	protected moveAndUpdate(x: number = 0, y: number = 0, z: number = 0): Point {
 		this._x += x;
 		this._y += y;
 		this._z += z;
-		this.update();
+		this.update(this);
 		return this;
 	}
 
-	public move(x: number = 0, y:number = 0, z: number = 0): Point {
+	public move(x: number = 0, y: number = 0, z: number = 0): Point {
 		this.x += x;
 		this.y += y;
 		this.z += z;
+		return this;
+	}
+
+	protected copyAndUpdate(point: Point): Point {
+		this._x = point.x;
+		this._y = point.y;
+		this._z = point.z;
+		this.update(this);
+		return this;
+	}
+
+	public copy(point: IVector3d): Point {
+		this.x = point.x;
+		this.y = point.y;
+		this.z = point.z;
 		return this;
 	}
 }
