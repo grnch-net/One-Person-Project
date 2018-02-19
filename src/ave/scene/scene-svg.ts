@@ -1,5 +1,4 @@
 import { SceneAbstract, ISceneAbstractParameters } from './scene-abstract';
-import { Animator } from "./../animator/animator";
 import { easyHTML } from "../../utils/easy-html";
 import { easyEvent } from "../../utils/easy-event";
 import { WorldSVG } from "./../graphic/world-svg";
@@ -7,7 +6,6 @@ import { WorldSVG } from "./../graphic/world-svg";
 export interface ISceneSVG {
 	newChildIndex: Object;
 	children: { [key: string]: any };
-	animator: Animator;
 	world: WorldSVG;
 
 	getHierarchy(): Object;
@@ -25,7 +23,6 @@ let ave = { config: { type: {
 export class SceneSVG extends SceneAbstract implements ISceneSVG {
 	public newChildIndex: Object;
 	public children: { [key: string]: any } = {};
-	public animator: Animator;
 	public world: WorldSVG;
 
 	// protected prefabs: Prefabs;
@@ -34,8 +31,6 @@ export class SceneSVG extends SceneAbstract implements ISceneSVG {
 		super(parameters);
 
 		if (!this.element) return;
-
-		this.animator = new Animator({ active: true });
 
         this.initChildIndexing();
 

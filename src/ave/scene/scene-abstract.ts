@@ -1,3 +1,4 @@
+import { Animator } from "./../animator/animator";
 import { easyHTML } from "../../utils/easy-html";
 import { easyEvent } from "../../utils/easy-event";
 
@@ -5,6 +6,7 @@ interface ISceneAbstract {
 	element: HTMLElement;
 	scene_width: number;
 	scene_height: number;
+	animator: Animator;
 }
 
 export interface ISceneAbstractParameters {
@@ -17,6 +19,7 @@ export abstract class SceneAbstract implements ISceneAbstract {
 	public element: HTMLElement;
 	public scene_width: number;
 	public scene_height: number;
+	public animator: Animator;
 
 	constructor(parameters:ISceneAbstractParameters) {
 		this.scene_width = parameters.width;
@@ -26,6 +29,8 @@ export abstract class SceneAbstract implements ISceneAbstract {
             this.element = this.initScene(parameters.nodeId);
         else
             this.element = this.createScene();
+
+		this.animator = new Animator({ active: true });
 	}
 
 	protected initScene(nodeId: string): HTMLElement {
