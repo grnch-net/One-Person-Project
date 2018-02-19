@@ -1,12 +1,17 @@
 import { GraphicObject } from "./graphic-object"
 import { isUndefined } from "./../../utils/easy-check";
 
-export interface IGraphicGroupAbstract {
+export interface IGraphicGroup {
 	addChild(element: any, index?: number): number;
 	removeChild(element: any): any;
 }
 
-export abstract class GraphicGroupAbstract extends GraphicObject implements IGraphicGroupAbstract {
+export class GraphicGroup extends GraphicObject implements IGraphicGroup {
+
+	constructor() {
+		super();
+		delete this.addPoint;
+	}
 
 	public addChild(element: any, index: number = null): number {
 		if (element.parent) element.parent.removeChild(element);
