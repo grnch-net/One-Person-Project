@@ -31,18 +31,18 @@ let animationGroup = animator.createGroup();
 ````typescript
 animator.timeout(()=>{
 	animationGroup
-		.add(1000, {
-			onStart: () => { console.log('1'); },
-			onComplete: () => { console.log('2'); }
-		}).add(1000, {
-			delay: 1000,
-			onStart: () => { console.log('3'); },
-			onComplete: () => { console.log('4'); }
-		}).add(1000, {
-			onUpdate: (progress) => {
-				console.log('progress', progress);
-			}
-		});
+	.add(1000, {
+		onStart: () => { console.log('1'); },
+		onComplete: () => { console.log('2'); }
+	}).add(1000, {
+		delay: 1000,
+		onStart: () => { console.log('3'); },
+		onComplete: () => { console.log('4'); }
+	}).add(1000, {
+		onUpdate: (progress) => {
+			console.log('progress', progress);
+		}
+	});
 }, 1000);
 ````
 
