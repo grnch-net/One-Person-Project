@@ -8,7 +8,7 @@ npm install -g gulp-cli
 npm install
 ```
 
-Build:
+## Build:
 
 ```shell
 gulp
