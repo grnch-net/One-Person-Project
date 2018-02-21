@@ -1,4 +1,4 @@
-console.info('%c Version: 47 ', 'background: #232627; color: #bada55');
+console.info('%c Version: 48 ', 'background: #232627; color: #bada55');
 
 import { AVE } from "./ave/ave";
 import { Quaternion } from "./ave/graphic/quaternion";
@@ -30,11 +30,12 @@ objectPoint.addPoint(10, 10, 0);
 
 let graphicGroup = new AVE.GraphicGroup();
 graphicGroup.name = 'group';
+// graphicGroup.position.set(10,0,0);
 graphicGroup.scale.set(2, 1, 1);
+graphicGroup.rotation.set(0, 0, 90);
 graphicGroup.addChild(objectPoint);
 
-scene.world.addChild(graphicGroup);
-graphicGroup.rotation.set(90, 90, 90);
+// scene.world.addChild(graphicGroup);
 let p0 = objectPoint.children[0].globalPosition;
 console.log('objectPoint', p0);
 
@@ -49,9 +50,6 @@ var q2 = new Quaternion(0, 1, 0, 90);
 var q3 = new Quaternion(1, 0, 0, 90);
 
 q.multiply(q1);
-q.multiply(q2);
-q.multiply(q3);
-console.log(q.transform(p));
-// console.log(q1.transformVector(p));
-// console.log(q2.transformVector(p));
-// console.log(q3.transformVector(p));
+// q.multiply(q2);
+// q.multiply(q3);
+// console.log(q.vectorRotate(p), q.getMatrix());

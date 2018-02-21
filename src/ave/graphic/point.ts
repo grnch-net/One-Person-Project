@@ -1,6 +1,6 @@
-interface IPoint extends IVector3d {
+export interface IPoint extends IVector3d {
 	update: Function;
-	set(x: number, y: number, z?: number): Point;
+	set(x?: number, y?: number, z?: number): Point;
 	rotate(x: number, y: number, z?: number): Point;
 	scale(x: number, y: number, z?: number): Point;
 	move(x: number, y: number, z?: number): Point;

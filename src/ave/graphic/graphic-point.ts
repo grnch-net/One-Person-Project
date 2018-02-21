@@ -3,6 +3,7 @@ import { Point } from "./point";
 export interface IGraphicPoint {
 	globalPosition: Point;
 	position: Point;
+	update(haveParnet?: boolean): boolean;
 	updateGlobalPosition(haveParnet: boolean): void;
 	moveGlobalPosition(x: number, y: number, z: number): void;
 	parent?: any;
@@ -14,29 +15,26 @@ export class GraphicPoint implements IGraphicPoint {
 	public parent: any;
 	public name: string = '';
 
-	public updateGlobalPosition(haveParnet: boolean = null): boolean {
+	public updateGlobalPosition(haveParnet: boolean = !!this.parent): boolean {
 		// new local position
 		this.globalPosition.copy(this.position);
 
-		// if ( (haveParnet !== null && !haveParnet) || !this.parent) return false;
-		if (!this.parent) return false;
+		if (!haveParnet) return false;
 
 		// new local position from global parent scale
 		let scale = this.parent['globalScale'];
 		this.globalPosition.scale(scale.x, scale.y, scale.z);
 
 		// new local position from global parent rotation
-		let point = this.parent.quaternion.transform(this.globalPosition);
-		this.globalPosition.copy(point);
-		// let position = this.globalPosition;
-		// let axisX = this.parent['globalRotation'].axisX;
-		// let axisY = this.parent['globalRotation'].axisY;
-		// let axisZ = this.parent['globalRotation'].axisZ;
-		// this.globalPosition.set(
-		// 	position.x * axisX.x + position.y * axisY.x + position.z * axisZ.x,
-		// 	position.x * axisX.y + position.y * axisY.y + position.z * axisZ.y,
-		// 	position.x * axisX.z + position.y * axisY.z + position.z * axisZ.z
-		// );
+		// let point = this.parent.quaternion.transform(this.globalPosition);
+		// this.globalPosition.copy(point);
+		let position = this.globalPosition;
+		let matrix = this.parent['globalRotation'];
+		this.globalPosition.set(
+			position.x * matrix[0].x + position.y * matrix[1].x + position.z * matrix[2].x,
+			position.x * matrix[0].y + position.y * matrix[1].y + position.z * matrix[2].y,
+			position.x * matrix[0].z + position.y * matrix[1].z + position.z * matrix[2].z
+		);
 
 		// new global position from global parent position
 		let move = this.parent['globalPosition'];
@@ -45,7 +43,7 @@ export class GraphicPoint implements IGraphicPoint {
 		return true;
 	}
 
-	public update(haveParnet: boolean = null) {
+	public update(haveParnet: boolean) {
 		return this.updateGlobalPosition(haveParnet);
 	}
 

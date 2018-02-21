@@ -1,10 +1,10 @@
 import { GraphicPoint, IGraphicPoint } from "./graphic-point"
 import { Quaternion } from "./quaternion";
-import { Point } from "./point";
+import { Point, IPoint } from "./point";
 
 interface IGraphicObject extends IGraphicPoint {
 	visible: boolean;
-	// globalRotation: IGlobalRotation;
+	globalRotation: IPoint[];
 	globalScale: Point;
 	position: Point;
 	rotation: Point;
@@ -17,18 +17,12 @@ interface IGraphicObject extends IGraphicPoint {
 	quaternion: Quaternion;
 }
 
-// interface IGlobalRotation {
-// 	axisX: Point,
-// 	axisY: Point,
-// 	axisZ: Point
-// }
-
 export class GraphicObject extends GraphicPoint implements IGraphicObject {
-	// public globalRotation: IGlobalRotation = {
-	// 	axisX: new Point(null, 1,0,0),
-	// 	axisY: new Point(null, 0,1,0),
-	// 	axisZ: new Point(null, 0,0,1),
-	// };
+	public globalRotation: IPoint[] = [
+		new Point(null, 1,0,0),
+		new Point(null, 0,1,0),
+		new Point(null, 0,0,1)
+	];
 	public globalScale: Point = new Point(null, 1, 1, 1);
 	public position: Point = new Point( this.updateLocalPosition.bind(this) );
 	public rotation: Point = new Point( this.updateLocalRotation.bind(this) );
@@ -73,7 +67,6 @@ export class GraphicObject extends GraphicPoint implements IGraphicObject {
 		// 	this.globalRotation.axisY.set(0, 1, 0);
 		// 	this.globalRotation.axisZ.set(0, 0, 1);
 		// }
-		//
 		// let args = [this.rotation.x, this.rotation.y, this.rotation.z];
 		// this.globalRotation.axisX.rotate(...args);
 		// this.globalRotation.axisY.rotate(...args);
@@ -83,8 +76,14 @@ export class GraphicObject extends GraphicPoint implements IGraphicObject {
 				.copy(this.parent.quaternion)
 				.multiplyEuler(this.rotation.x, this.rotation.y, this.rotation.z);
 		} else {
-			this.quaternion.setFromEuler(this.rotation.x, this.rotation.y, this.rotation.z);
+			this.quaternion
+				.setFromEuler(this.rotation.x, this.rotation.y, this.rotation.z);
 		}
+
+		let matrix = this.quaternion.getMatrix();
+		this.globalRotation[0].set(...matrix[0]);
+		this.globalRotation[1].set(...matrix[1]);
+		this.globalRotation[2].set(...matrix[2]);
 	}
 
 	protected updateLocalRotation(): void {
@@ -109,7 +108,7 @@ export class GraphicObject extends GraphicPoint implements IGraphicObject {
 		this.updateChildren();
 	}
 
-	public update(haveParnet: boolean = null): boolean {
+	public update(haveParnet: boolean = undefined): boolean {
 		if (!this._visible) return;
 		haveParnet = super.update(haveParnet);
 
@@ -142,15 +141,12 @@ export class GraphicObject extends GraphicPoint implements IGraphicObject {
 		y *= this.scale.y;
 		z *= this.scale.x;
 
-		// let axisX = this.globalRotation.axisX;
-		// let axisY = this.globalRotation.axisY;
-		// let axisZ = this.globalRotation.axisZ;
+		// let matrix = this.globalRotation;
+		// x = x*matrix[0].x + y*matrix[1].x + z*matrix[2].x;
+		// y = x*matrix[0].y + y*matrix[1].y + z*matrix[2].y;
+		// z = x*matrix[0].z + y*matrix[1].z + z*matrix[2].z;
 
-		// x = x * axisX.x + y * axisY.x + z * axisZ.x;
-		// y = x * axisX.y + y * axisY.y + z * axisZ.y;
-		// z = x * axisX.z + y * axisY.z + z * axisZ.z;
-
-		let point = this.quaternion.transform({x, y, z});
+		let point = this.quaternion.vectorRotate({x, y, z});
 
 		this.children.forEach((child: GraphicPoint) => child.moveGlobalPosition(point.x, point.y, point.z));
 	}

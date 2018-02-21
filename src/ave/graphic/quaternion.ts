@@ -1,11 +1,13 @@
 import { IVector3d } from "./point";
 
 interface IQuaternionObject extends IQuaternion {
-	transform(v: IVector3d): IVector3d;
+	vectorRotate(v: IVector3d): IVector3d;
 	multiplyEuler(x: number, y: number, z: number): void;
 	setFromEuler(x: number, y: number, z: number): void;
+	set(w: number, x: number, y: number, z: number, _n?: boolean): IQuaternionObject;
 	copy(q: IQuaternion): IQuaternionObject;
 	scale(value: number): IQuaternionObject;
+	getMatrix(): number[][];
 }
 
 interface IQuaternion {
@@ -38,12 +40,16 @@ export class Quaternion implements IQuaternionObject {
 		if (arguments.length != 4) return;
 
 		let v = this.vector_normalize(x, y, z);
-		let a = Math.PI/180 *angle;
+		let a = this.gradusToRadian(angle);
 
 		this.x = v.x * Math.sin(a/2);
 		this.y = v.y * Math.sin(a/2);
-		this.z = - v.z * Math.sin(a/2);
+		this.z = v.z * Math.sin(a/2);
 		this.w = Math.cos(a/2);
+	}
+
+	protected gradusToRadian(value: number): number {
+		return Math.PI/180 *-value;
 	}
 
 	protected vector_normalize(x: number, y: number, z: number) {
@@ -77,17 +83,28 @@ export class Quaternion implements IQuaternionObject {
 	}
 
 	protected length(q: IQuaternion): number {
-		return (q.w**2 + q.x**2 + q.y**2 + q.z**2)**0.5;
+		return this.norm(q)**0.5;
 	}
 
-	protected invert(q: IQuaternion): IQuaternion {
-		return {
-			w: q.w,
-			x: -q.x,
-			y: -q.y,
-			z: -q.z,
-			_n: true
-		}
+	protected norm(q: IQuaternion): number {
+		return q.w**2 + q.x**2 + q.y**2 + q.z**2;
+	}
+
+	protected conjugate(q: IQuaternion): IQuaternion {
+		q.x = -q.x;
+		q.y = -q.y;
+		q.z = -q.z;
+		return q;
+	}
+
+	protected inverse(q: IQuaternion): IQuaternion {
+		q = this.conjugate(q);
+		let norm = this.norm(q);
+		q.w /= norm;
+		q.x /= norm;
+		q.y /= norm;
+		q.z /= norm;
+		return q
 	}
 
 	protected quat_multiply_quat(a: IQuaternion, b: IQuaternion): IQuaternion {
@@ -106,9 +123,12 @@ export class Quaternion implements IQuaternionObject {
 		return this;
 	}
 
-	public transform(v: IVector3d): IVector3d {
+	public vectorRotate(v: IVector3d): IVector3d {
 		let t = this.quat_multiply_vector(this, v);
-		t = this.quat_multiply_quat(t, this.invert(this));
+		let q: IQuaternion = {w: this.w, x: this.x, y: this.y, z: this.z, _n: true};
+		q = this.inverse(q);
+
+		t = this.quat_multiply_quat(t, q);
 		return {
 			x: t.x,
 			y: t.y,
@@ -124,6 +144,15 @@ export class Quaternion implements IQuaternionObject {
 	    	z: a.w*b.z + a.x*b.y - a.y*b.x,
 			_n: false
 	    }
+	}
+
+	public set(w: number, x: number, y: number, z: number, _n: boolean = false): IQuaternionObject {
+		this.w = w;
+		this.x = x;
+		this.y = y;
+		this.z = z;
+		this._n = _n;
+		return this;
 	}
 
 	public copy(q: IQuaternion): IQuaternionObject {
@@ -174,5 +203,51 @@ export class Quaternion implements IQuaternionObject {
 		if (z) q.multiply(new Quaternion(0, 0, 1, z));
 
 		this.copy(q);
+	}
+
+	public getMatrix(): number[][] {
+		let m: number[][] = [ [], [], [] ];
+		let x = this.x, y = this.y, z = this.z, w = this.w;
+		let wx, wy, wz, xx, yy, yz, xy, xz, zz, x2, y2, z2;
+		let s  = 2.0 / this.norm(this);
+		x2 = x * s;    y2 = y * s;    z2 = z * s;
+        xx = x * x2;   xy = x * y2;   xz = x * z2;
+        yy = y * y2;   yz = y * z2;   zz = z * z2;
+        wx = w * x2;   wy = w * y2;   wz = w * z2;
+
+        m[0][0] = 1.0 - (yy + zz);
+        m[1][0] = xy - wz;
+        m[2][0] = xz + wy;
+
+        m[0][1] = xy + wz;
+        m[1][1] = 1.0 - (xx + zz);
+        m[2][1] = yz - wx;
+
+        m[0][2] = xz - wy;
+        m[1][2] = yz + wx;
+        m[2][2] = 1.0 - (xx + yy);
+
+		return m;
+	}
+
+	public init_linear_interpolation(q: IQuaternion): IQuaternion {
+		if (q._n) q = this.normalize(q);
+		let inner: number = this.w * q.w + this.x * q.x + this.y * q.y + this.z * q.z;
+		if (inner < 0) q = this.conjugate(q);
+		q.w -= this.w;
+		q.x -= this.x;
+		q.y -= this.y;
+		q.z -= this.z;
+		return q;
+	}
+
+	public linear_interpolation(t: number, q: IQuaternion): IQuaternion {
+		return {
+			w: this.w + q.w * t,
+			x: this.x + q.x * t,
+			y: this.y + q.y * t,
+			z: this.z + q.z * t,
+			_n: true
+		}
 	}
 }
