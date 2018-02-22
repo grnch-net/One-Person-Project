@@ -63,5 +63,9 @@ export let easyHTML: IEasyHTML = {
         }
 
         return htmlElement;
-    }
+    },
+
+	attr: function (element: HTMLElement, parameters: any): any {
+
+	}
 };

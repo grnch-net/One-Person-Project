@@ -3,6 +3,7 @@ export interface IEasyHTML {
 	readonly xlink: string;
 	readonly svgTags: string[];
 
+	attr(element: HTMLElement, parameters?: any): any;
 	createElement(parameters?: IHTMLElementConfig): HTMLElement;
 }
 

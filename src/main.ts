@@ -8,22 +8,6 @@ import { Quaternion } from "./ave/graphic/quaternion";
 let scene = new AVE.SceneSVG({ width: 800, height: 600});
 (window as any).scene = scene;
 
-// let animationGroup = scene.animator.createGroup();
-// scene.animator.timeout(()=>{
-// 	animationGroup.add(1000, {
-// 		onStart: ()=>{console.log('1')},
-// 		onComplete: ()=>{console.log('2')}
-// 	}).add(1000, {
-// 		delay: 1000,
-// 		onStart: ()=>{console.log('3')},
-// 		onComplete: ()=>{console.log('4')}
-// 	}).add(1000, {
-// 		onStart: ()=>{console.log('5')},
-// 		onComplete: ()=>{console.log('6')}
-// 	});
-// }, 1000);
-
-
 let objectPoint = new AVE.GraphicObject();
 objectPoint.name = 'point';
 objectPoint.addPoint(10, 10, 0);
@@ -38,18 +22,3 @@ graphicGroup.addChild(objectPoint);
 // scene.world.addChild(graphicGroup);
 let p0 = objectPoint.children[0].globalPosition;
 console.log('objectPoint', p0);
-
-
-// public element: HTMLElement = easyHTML.createElement({ type: 'g', });
-
-
-var p = { x: 20, y: 10, z: 0 };
-var q = new Quaternion();
-var q1 = new Quaternion(0, 0, 1, 90);
-var q2 = new Quaternion(0, 1, 0, 90);
-var q3 = new Quaternion(1, 0, 0, 90);
-
-q.multiply(q1);
-// q.multiply(q2);
-// q.multiply(q3);
-// console.log(q.vectorRotate(p), q.getMatrix());
