@@ -1,4 +1,6 @@
 import { Animator } from "./../animator/animator";
+import { World } from "./../graphic/world";
+import { Camera } from "./camera";
 import { easyHTML } from "../../utils/easy-html";
 import { easyEvent } from "../../utils/easy-event";
 
@@ -7,6 +9,10 @@ interface ISceneAbstract {
 	scene_width: number;
 	scene_height: number;
 	animator: Animator;
+	world: World;
+	mainCamera: Camera;
+
+	render(): void
 }
 
 export interface ISceneAbstractParameters {
@@ -20,6 +26,8 @@ export abstract class SceneAbstract implements ISceneAbstract {
 	public scene_width: number;
 	public scene_height: number;
 	public animator: Animator;
+	public mainCamera: Camera;
+	public world: World;
 
 	constructor(parameters:ISceneAbstractParameters) {
 		this.scene_width = parameters.width;
@@ -31,6 +39,8 @@ export abstract class SceneAbstract implements ISceneAbstract {
             this.element = this.createScene();
 
 		this.animator = new Animator({ active: true });
+		this.mainCamera = new Camera(this);
+		this.createWorld();
 	}
 
 	protected initScene(nodeId: string): HTMLElement {
@@ -43,6 +53,10 @@ export abstract class SceneAbstract implements ISceneAbstract {
 		console.error('Need to override this method.');
 		return easyHTML.createElement();
     }
+
+	protected createWorld(): void {
+		this.world = new World();
+	}
 
 	protected initEvents(): void {
 		easyEvent.addEvent(window, 'Resize', (e:any) => this.onResize(e) );
@@ -66,5 +80,9 @@ export abstract class SceneAbstract implements ISceneAbstract {
 			this.element.setAttributeNS(null, 'width', '' + clientWidth);
 			this.element.setAttributeNS(null, 'height', '' + (bgProcent_Y * clientWidth / 100) );
 		}
+	}
+
+	public render(): void {
+		this.world.rendering(this.mainCamera);
 	}
 }

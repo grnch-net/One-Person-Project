@@ -1,12 +1,10 @@
 import { SceneAbstract, ISceneAbstractParameters } from './scene-abstract';
 import { easyHTML } from "../../utils/easy-html";
 import { easyEvent } from "../../utils/easy-event";
-import { World } from "./../graphic/world";
 
 export interface ISceneSVG {
 	newChildIndex: Object;
 	children: { [key: string]: any };
-	world: World;
 
 	getHierarchy(): Object;
 }
@@ -23,7 +21,6 @@ let ave = { config: { type: {
 export class SceneSVG extends SceneAbstract implements ISceneSVG {
 	public newChildIndex: Object;
 	public children: { [key: string]: any } = {};
-	public world: World;
 
 	// protected prefabs: Prefabs;
 
@@ -37,8 +34,6 @@ export class SceneSVG extends SceneAbstract implements ISceneSVG {
 		// this.prefabs = new ave.Prefabs({
 		// 	scene: this
 		// });
-
-        this.createWorld();
 
         this.initEvents();
     }
@@ -97,7 +92,7 @@ export class SceneSVG extends SceneAbstract implements ISceneSVG {
 	}
 
 	protected createWorld(): void {
-        this.world = new World();
+		super.createWorld();
 		// this.world.position.set(this.scene_width / 2, this.scene_height / 2);
 
         // this.element.appendChild(this.world.element);
