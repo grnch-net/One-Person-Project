@@ -1,10 +1,11 @@
 import { GraphicPoint, IGraphicPoint } from "./graphic-point"
 import { Quaternion } from "./quaternion";
-import { Point, IPoint } from "./point";
+import { Point } from "./point";
+import { Camera } from "./../scene/camera";
 
 interface IGraphicObject extends IGraphicPoint {
 	visible: boolean;
-	globalRotation: IPoint[];
+	globalRotation: Point[];
 	globalScale: Point;
 	position: Point;
 	rotation: Point;
@@ -12,13 +13,13 @@ interface IGraphicObject extends IGraphicPoint {
 	parent: IGraphicObject;
 	children: GraphicPoint[];
 	updateChildren(): GraphicObject
-	addPoint(x: number, y: number, z: number): GraphicObject;
+
 	moveGlobalPosition(x: number, y: number, z: number): void;
 	quaternion: Quaternion;
 }
 
 export class GraphicObject extends GraphicPoint implements IGraphicObject {
-	public globalRotation: IPoint[] = [
+	public globalRotation: Point[] = [
 		new Point(null, 1,0,0),
 		new Point(null, 0,1,0),
 		new Point(null, 0,0,1)
@@ -81,9 +82,13 @@ export class GraphicObject extends GraphicPoint implements IGraphicObject {
 		}
 
 		let matrix = this.quaternion.getMatrix();
-		this.globalRotation[0].set(...matrix[0]);
-		this.globalRotation[1].set(...matrix[1]);
-		this.globalRotation[2].set(...matrix[2]);
+		this.setGlobalRotateAxis(0, ...matrix[0]);
+		this.setGlobalRotateAxis(1, ...matrix[1]);
+		this.setGlobalRotateAxis(2, ...matrix[2]);
+	}
+
+	protected setGlobalRotateAxis(axis: number, x?: number, y?: number, z?: number) {
+		this.globalRotation[axis].set(x, y, z);
 	}
 
 	protected updateLocalRotation(): void {
@@ -123,14 +128,6 @@ export class GraphicObject extends GraphicPoint implements IGraphicObject {
 		return this;
 	}
 
-	public addPoint(x: number, y: number, z: number): GraphicObject {
-		let newPoint = new GraphicPoint();
-		newPoint.parent = this;
-		newPoint.position.set(x, y, z);
-		this.children.push(newPoint);
-		return this;
-	}
-
 	public moveGlobalPosition(x: number, y: number, z: number): void {
 		super.moveGlobalPosition(x, y, z);
 		this.moveChildren(x, y, z);
@@ -149,5 +146,12 @@ export class GraphicObject extends GraphicPoint implements IGraphicObject {
 		let point = this.quaternion.vectorRotate({x, y, z});
 
 		this.children.forEach((child: GraphicPoint) => child.moveGlobalPosition(point.x, point.y, point.z));
+	}
+
+	public rendering(camera: Camera): boolean {
+		if (!this._visible) return false;
+		super.rendering(camera);
+		this.children.forEach((child: GraphicPoint) => child.rendering(camera));
+		return true;
 	}
 }

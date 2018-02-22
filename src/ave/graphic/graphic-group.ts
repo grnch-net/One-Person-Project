@@ -1,5 +1,4 @@
-import { GraphicObject } from "./graphic-object"
-import { isUndefined } from "./../../utils/easy-check";
+import { GraphicObject } from "./graphic-object";
 
 export interface IGraphicGroup {
 	addChild(element: any, index?: number): number;

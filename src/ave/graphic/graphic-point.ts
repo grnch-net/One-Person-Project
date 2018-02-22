@@ -1,15 +1,20 @@
 import { Point } from "./point";
+import { ICamera } from "./../scene/i-camera";
 
 export interface IGraphicPoint {
 	globalPosition: Point;
 	position: Point;
+	parent?: any;
+
 	update(haveParnet?: boolean): boolean;
 	updateGlobalPosition(haveParnet: boolean): void;
 	moveGlobalPosition(x: number, y: number, z: number): void;
-	parent?: any;
+	rendering(camera: ICamera): boolean;
 }
 
+
 export class GraphicPoint implements IGraphicPoint {
+	public viewPosition: number[] = [0, 0];
 	public globalPosition: Point = new Point();
 	public position: Point = new Point( this.updateGlobalPosition.bind(this) );
 	public parent: any;
@@ -49,6 +54,21 @@ export class GraphicPoint implements IGraphicPoint {
 
 	public moveGlobalPosition(x: number, y: number, z: number): void {
 		this.globalPosition.move(x, y, z);
+	}
+
+	public rendering(camera: ICamera): boolean {
+		this.updateView(camera);
+		return true;
+	}
+
+	protected updateView(camera: ICamera) {
+		let position = this.globalPosition;
+		let horizont = camera.horizontPoint;
+		let multiply = position.z / horizont.z;
+		this.viewPosition = [
+			(position.x - horizont.x) * multiply,
+			(position.y - horizont.y) * multiply
+		];
 	}
 
 }
