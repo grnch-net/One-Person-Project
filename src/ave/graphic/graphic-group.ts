@@ -7,11 +7,6 @@ export interface IGraphicGroup {
 
 export class GraphicGroup extends GraphicObject implements IGraphicGroup {
 
-	constructor() {
-		super();
-		delete this.addPoint;
-	}
-
 	public addChild(element: any, index: number = null): number {
 		if (element.parent) element.parent.removeChild(element);
 
