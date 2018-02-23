@@ -1,24 +1,19 @@
-console.info('%c Version: 48 ', 'background: #232627; color: #bada55');
+console.info('%c Version: 50 ', 'background: #232627; color: #bada55');
 
 import { AVE } from "./ave/ave";
 import { Quaternion } from "./ave/graphic/quaternion";
 
 (window as any).AVE = AVE;
 
-let scene = new AVE.SceneSVG({ width: 800, height: 600});
+let scene = new AVE.Scene({ width: 800, height: 600});
 (window as any).scene = scene;
 
-let objectPoint = new AVE.GraphicObject();
-objectPoint.name = 'point';
-objectPoint.addPoint(10, 10, 0);
+let path = new AVE.GraphicPath();
+path.addPoint([0, 10], [5, 10])
+	.addPoint([10, 0], null, [10, 5])
+	.addPoint([0, 0]);
+path.closePath = true;
 
-let graphicGroup = new AVE.GraphicGroup();
-graphicGroup.name = 'group';
-// graphicGroup.position.set(10,0,0);
-graphicGroup.scale.set(2, 1, 1);
-graphicGroup.rotation.set(0, 0, 90);
-graphicGroup.addChild(objectPoint);
-
-// scene.world.addChild(graphicGroup);
-let p0 = objectPoint.children[0].globalPosition;
-console.log('objectPoint', p0);
+scene.world.addChild(path);
+scene.render();
+console.log(path.element, path);
