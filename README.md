@@ -18,10 +18,10 @@ gulp
 
 #### Create scene:
 ````typescript
-let scene = new AVE.SceneSVG({ width: 800, height: 600});
+let scene = new AVE.Scene({ width: 800, height: 600});
 ````
 
-#### Create animator and animationGroup:
+#### Create animator and animation group:
 ````typescript
 let animator = new Animator({ active: true });
 let animationGroup = animator.createGroup();
@@ -44,6 +44,23 @@ animator.timeout(()=>{
 		}
 	});
 }, 1000);
+````
+
+#### Create graphic group and transform:
+````typescript
+let graphicGroup = new AVE.GraphicGroup();
+graphicGroup.name = 'group';
+graphicGroup.position.set(10,0,0);
+graphicGroup.scale.set(2, 1, 1);
+graphicGroup.rotation.set(0, 0, 90);
+scene.world.addChild(graphicGroup);
+````
+
+#### Create graphic object:
+````typescript
+let objectPoint = new AVE.GraphicObject();
+objectPoint.name = 'point';
+graphicGroup.addChild(objectPoint);
 ````
 
 
