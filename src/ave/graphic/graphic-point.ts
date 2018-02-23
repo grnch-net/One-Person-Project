@@ -64,10 +64,10 @@ export class GraphicPoint implements IGraphicPoint {
 	protected updateView(camera: ICamera) {
 		let position = this.globalPosition;
 		let horizont = camera.horizontPoint;
-		let multiply = position.z / horizont.z;
+		let multiply = 1 - position.z / horizont.z;
 		this.viewPosition = [
-			(position.x - horizont.x) * multiply,
-			(position.y - horizont.y) * multiply
+			(position.x - horizont.x) * multiply + horizont.x,
+			(position.y - horizont.y) * multiply + horizont.y
 		];
 	}
 
