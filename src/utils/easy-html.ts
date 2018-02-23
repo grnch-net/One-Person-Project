@@ -46,7 +46,7 @@ export let easyHTML: IEasyHTML = {
 		}
 
 		let attr = parameters.attr;
-		if (typeof attr === 'object') {
+		if (attr) {
 			for(let key in attr) {
 				if (attr[key] === undefined) continue;
 
@@ -65,7 +65,9 @@ export let easyHTML: IEasyHTML = {
         return htmlElement;
     },
 
-	attr: function (element: HTMLElement, parameters: any): any {
-
+	setAttribute: function (element: HTMLElement, attr: any): void {
+		for(let key in attr) {
+			element.setAttributeNS( null, key, <string>attr[key] );
+		}
 	}
 };

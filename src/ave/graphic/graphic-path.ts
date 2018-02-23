@@ -3,14 +3,17 @@ import { GraphicObject } from "./graphic-object";
 import { IPoint } from "./point";
 
 interface IGraphicPath {
+	closePath: boolean;
 	addPoint(p0: number[], p1?: number[], p2?: number[]): GraphicPath;
 }
 
 export class GraphicPath extends GraphicObject implements IGraphicPath {
-	public addPoint(p0: number[], p1: number[], p2: number[]): GraphicPath {
-		this.children.push( this.createPoint(...(p2 || p0)) );
-		this.children.push( this.createPoint(...p0) );
-		this.children.push( this.createPoint(...(p1 || p0)) );
+	public closePath: boolean = false;
+
+	public addPoint(p0: number[], p1: number[] = null, p2: number[] = null): GraphicPath {
+		this.createPoint( ...(p2 || p0) );
+		this.createPoint( ...p0 );
+		this.createPoint( ...(p1 || p0) );
 
 		return this;
 	}
@@ -19,6 +22,7 @@ export class GraphicPath extends GraphicObject implements IGraphicPath {
 		let newPoint = new GraphicPoint();
 		newPoint.parent = this;
 		(newPoint.position as IPoint).set(x, y, z);
+		this.children.push( newPoint );
 		return newPoint;
 	}
 
