@@ -2,6 +2,7 @@ import { Point } from "./point";
 import { ICamera } from "./../scene/i-camera";
 
 export interface IGraphicPoint {
+	viewPosition: number[];
 	globalPosition: Point;
 	position: Point;
 	parent?: any;
@@ -62,13 +63,7 @@ export class GraphicPoint implements IGraphicPoint {
 	}
 
 	protected updateView(camera: ICamera) {
-		let position = this.globalPosition;
-		let horizont = camera.horizontPoint;
-		let multiply = 1 - position.z / horizont.z;
-		this.viewPosition = [
-			(position.x - horizont.x) * multiply + horizont.x,
-			(position.y - horizont.y) * multiply + horizont.y
-		];
+		camera.renderPoint(this.globalPosition);
 	}
 
 }

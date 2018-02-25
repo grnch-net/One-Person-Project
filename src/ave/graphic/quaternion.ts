@@ -250,4 +250,6 @@ export class Quaternion implements IQuaternionObject {
 			_n: true
 		}
 	}
+
+	// TODO: add getEulers method
 }

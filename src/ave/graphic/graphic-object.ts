@@ -2,6 +2,7 @@ import { GraphicPoint, IGraphicPoint } from "./graphic-point"
 import { Quaternion } from "./quaternion";
 import { Point } from "./point";
 import { Camera } from "./../scene/camera";
+import { ISceneAbstract } from "./../scene/i-scene-abstract";
 
 interface IGraphicObject extends IGraphicPoint {
 	visible: boolean;
@@ -12,10 +13,11 @@ interface IGraphicObject extends IGraphicPoint {
 	scale: Point;
 	parent: IGraphicObject;
 	children: GraphicPoint[];
-	updateChildren(): GraphicObject
+	quaternion: Quaternion;
+	scene: ISceneAbstract;
 
 	moveGlobalPosition(x: number, y: number, z: number): void;
-	quaternion: Quaternion;
+	updateChildren(): GraphicObject;
 }
 
 export class GraphicObject extends GraphicPoint implements IGraphicObject {
@@ -30,6 +32,7 @@ export class GraphicObject extends GraphicPoint implements IGraphicObject {
 	public scale: Point = new Point( this.updateLocalScale.bind(this), 1, 1, 1 );
 	public children: GraphicPoint[] = [];
 	public quaternion: Quaternion = new Quaternion();
+	public scene: ISceneAbstract;
 
 	protected _visible: boolean = true;
 	protected _parent: IGraphicObject;
@@ -38,7 +41,11 @@ export class GraphicObject extends GraphicPoint implements IGraphicObject {
 	set visible(value: boolean) { this._visible = value; this.update(); }
 
 	get parent(): IGraphicObject { return this._parent }
-	set parent(value: IGraphicObject) { this._parent = value; this.update(); }
+	set parent(value: IGraphicObject) {
+		this._parent = value;
+		this.scene = value.scene;
+		this.update();
+	}
 
 	protected updateLocalPosition() {
 		// save old position data
@@ -150,6 +157,12 @@ export class GraphicObject extends GraphicPoint implements IGraphicObject {
 
 	public rendering(camera: Camera): boolean {
 		if (!this._visible) return false;
+
+		// if (!camera) {
+		// 	if (!this.scene) return false;
+		// 	camera = this.scene.mainCamera;
+		// }
+
 		super.rendering(camera);
 		this.children.forEach((child: GraphicPoint) => child.rendering(camera));
 		return true;

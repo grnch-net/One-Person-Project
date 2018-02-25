@@ -5,4 +5,6 @@ export interface ICamera {
 	scene: any;
 	horizontPoint: IPoint;
 	UI: IUserInterface;
+
+	renderPoint(position: IPoint): number[];
 }
