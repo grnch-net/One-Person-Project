@@ -25,7 +25,7 @@ export let easyHTML: IEasyHTML = {
     createElement: function (parameters: IHTMLElementConfig = {}): HTMLElement {
         let htmlElement: HTMLElement;
 
-        if (typeof parameters.type !== 'string') {
+        if (!parameters.type) {
             htmlElement = document.createElement('div');
         } else {
 			let _type: string = parameters.type.toLowerCase();
@@ -34,7 +34,6 @@ export let easyHTML: IEasyHTML = {
 				htmlElement = document.createElementNS(this.svgns, parameters.type);
 			else
 				htmlElement = document.createElement(parameters.type);
-
         }
 
 		if (parameters.parent) {
