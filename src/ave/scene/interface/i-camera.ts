@@ -1,5 +1,5 @@
-import { IUserInterface } from "./../graphic/user-interface";
-import { IPoint } from "./../graphic/point";
+import { IUserInterface } from "./../../graphic/user-interface";
+import { IPoint } from "./../../graphic/point";
 
 export interface ICamera {
 	scene: any;

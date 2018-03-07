@@ -15,7 +15,7 @@ export interface IGraphicPoint {
 
 
 export class GraphicPoint implements IGraphicPoint {
-	public viewPosition: number[] = [0, 0];
+	public viewPosition: number[];
 	public globalPosition: Point = new Point();
 	public position: Point = new Point( this.updateGlobalPosition.bind(this) );
 	public parent: any;
@@ -63,7 +63,7 @@ export class GraphicPoint implements IGraphicPoint {
 	}
 
 	protected updateView(camera: ICamera) {
-		camera.renderPoint(this.globalPosition);
+		this.viewPosition = camera.renderPoint(this.globalPosition);
 	}
 
 }

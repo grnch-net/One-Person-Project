@@ -3,6 +3,11 @@ export const enum DimensionType {
 	'3D' = 3
 };
 
+export const enum GraphicType {
+	GROUP,
+	OBJECT
+};
+
 export const Default = {
 	scene: {
 		dimension: DimensionType['3D'],

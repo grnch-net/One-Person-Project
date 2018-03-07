@@ -1,5 +1,5 @@
 import { DimensionType } from "./../config";
-import { ICamera } from "./i-camera";
+import { ICamera } from "./interface/i-camera";
 import { GraphicPoint } from "./../graphic/graphic-point";
 import { UserInterface } from "./../graphic/user-interface";
 import { Point } from "./../graphic/point";

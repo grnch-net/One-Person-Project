@@ -2,9 +2,11 @@ import { GraphicPoint, IGraphicPoint } from "./graphic-point"
 import { Quaternion } from "./quaternion";
 import { Point } from "./point";
 import { Camera } from "./../scene/camera";
-import { ISceneAbstract } from "./../scene/i-scene-abstract";
+import { ISceneAbstract } from "./../scene/interface/i-scene-abstract";
 
-interface IGraphicObject extends IGraphicPoint {
+export interface IGraphicObject extends IGraphicPoint {
+	// _id: number;
+	static: boolean;
 	visible: boolean;
 	globalRotation: Point[];
 	globalScale: Point;
@@ -12,7 +14,7 @@ interface IGraphicObject extends IGraphicPoint {
 	rotation: Point;
 	scale: Point;
 	parent: IGraphicObject;
-	children: GraphicPoint[];
+	children: IGraphicPoint[];
 	quaternion: Quaternion;
 	scene: ISceneAbstract;
 
@@ -34,6 +36,8 @@ export class GraphicObject extends GraphicPoint implements IGraphicObject {
 	public quaternion: Quaternion = new Quaternion();
 	public scene: ISceneAbstract;
 
+	// public _id: number;
+	public static: boolean = false;
 	protected _visible: boolean = true;
 	protected _parent: IGraphicObject;
 
@@ -157,6 +161,7 @@ export class GraphicObject extends GraphicPoint implements IGraphicObject {
 
 	public rendering(camera: Camera): boolean {
 		if (!this._visible) return false;
+		if (this.static && this.viewPosition) return false;
 
 		// if (!camera) {
 		// 	if (!this.scene) return false;

@@ -1,3 +1,4 @@
+import { ISceneAbstract } from "./interface/i-scene-abstract";
 import { Default, DimensionType } from "./../config";
 import { Animator } from "./../animator/animator";
 import { World } from "./../graphic/world";

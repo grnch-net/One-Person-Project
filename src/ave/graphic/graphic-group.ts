@@ -1,27 +1,28 @@
 import { GraphicObject } from "./graphic-object";
 
 export interface IGraphicGroup {
-	addChild(element: any, index?: number): number;
+	addChild(element: any, index?: number): IGraphicGroup;
 	removeChild(element: any): any;
 }
 
 export class GraphicGroup extends GraphicObject implements IGraphicGroup {
 
-	public addChild(element: any, index: number = null): number {
-		if (element.parent) element.parent.removeChild(element);
+	public addChild(graphicObject: GraphicObject, index: number = null): GraphicGroup {
+		if (graphicObject.parent)
+			(graphicObject.parent as GraphicGroup).removeChild(graphicObject);
 
 		if (index !== null && index < this.children.length)
-			this.children.splice(index, 0, element);
+			this.children.splice(index, 0, graphicObject);
 		else
-			this.children.push(element);
+			index = this.children.push(graphicObject) -1;
 
-		element.parent = this;
+		graphicObject.parent = this;
 
-		return index;
+		return this;
 	}
 
-	public removeChild(element: any): any {
-		let index = this.children.indexOf(element);
+	public removeChild(graphicObject: GraphicObject): GraphicGroup {
+		let index = this.children.indexOf(graphicObject);
 
 		if (index < 0) {
 			console.warn('Element is missing on group.');
@@ -29,8 +30,8 @@ export class GraphicGroup extends GraphicObject implements IGraphicGroup {
 		}
 
 		this.children.splice(index, 1);
-		delete element.parent;
+		delete graphicObject.parent;
 
-		return element;
+		return this;
 	}
 }

@@ -1,12 +1,14 @@
-import { SceneAbstract, ISceneAbstractParameters } from './scene-abstract';
+import { GraphicType } from './../config';
+import { SceneAbstract, ISceneAbstractParameters } from './../scene/scene-abstract';
+import { ISVGGroup } from './svg-group';
+import { ISVGObject } from './svg-object';
+import { World } from "./../graphic/world";
 import { easyHTML } from "../../utils/easy-html";
 import { easyEvent } from "../../utils/easy-event";
 
 export interface ISceneSVG {
-	newChildIndex: Object;
-	children: { [key: string]: any };
-
-	getHierarchy(): Object;
+	// newChildIndex: Object;
+	addElement(graphicObject: any, parent: ISVGGroup, index: number): number;
 }
 
 // TODO: create and change this(let ave) to config
@@ -19,8 +21,7 @@ let ave = { config: { type: {
 }}};
 
 export class SceneSVG extends SceneAbstract implements ISceneSVG {
-	public newChildIndex: Object;
-	public children: { [key: string]: any } = {};
+	// public newChildIndex: Object;
 
 	// protected prefabs: Prefabs;
 
@@ -29,7 +30,7 @@ export class SceneSVG extends SceneAbstract implements ISceneSVG {
 
 		if (!this.element) return;
 
-        this.initChildIndexing();
+        // this.initChildIndexing();
 
 		// this.prefabs = new ave.Prefabs({
 		// 	scene: this
@@ -60,36 +61,36 @@ export class SceneSVG extends SceneAbstract implements ISceneSVG {
         });
     }
 
-	protected initChildIndexing() {
-        let _scene = this;
-        this.newChildIndex = {
-            get group() {
-                return _scene.searchFreeIndex(ave.config.type.GROUP);
-            },
-            get graphic() {
-				return _scene.searchFreeIndex(ave.config.type.GRAPHIC);
-            },
-			get spriteSheet() {
-				return _scene.searchFreeIndex(ave.config.type.SPRITESHEET);
-			},
-			get filter() {
-				return _scene.searchFreeIndex(ave.config.type.FILTER);
-			},
-			get gradient() {
-				return _scene.searchFreeIndex(ave.config.type.GRADIENT);
-			},
-        };
-    }
+	// protected initChildIndexing() {
+    //     let _scene = this;
+    //     this.newChildIndex = {
+    //         get group() {
+    //             return _scene.searchFreeIndex(ave.config.type.GROUP);
+    //         },
+    //         get graphic() {
+	// 			return _scene.searchFreeIndex(ave.config.type.GRAPHIC);
+    //         },
+	// 		get spriteSheet() {
+	// 			return _scene.searchFreeIndex(ave.config.type.SPRITESHEET);
+	// 		},
+	// 		get filter() {
+	// 			return _scene.searchFreeIndex(ave.config.type.FILTER);
+	// 		},
+	// 		get gradient() {
+	// 			return _scene.searchFreeIndex(ave.config.type.GRADIENT);
+	// 		},
+    //     };
+    // }
 
-	private searchFreeIndex(key: string): number {
-		let ind: number = 0;
-
-		while (this.children[key+'-'+ind] !== undefined) {
-			ind++;
-		}
-
-		return ind;
-	}
+	// private searchFreeIndex(key: string): number {
+	// 	let ind: number = 0;
+	//
+	// 	while (this.childrenList[key+'-'+ind] !== undefined) {
+	// 		ind++;
+	// 	}
+	//
+	// 	return ind;
+	// }
 
 	protected createWorld(): void {
 		super.createWorld();
@@ -98,103 +99,100 @@ export class SceneSVG extends SceneAbstract implements ISceneSVG {
         // this.element.appendChild(this.world.element);
     }
 
-	protected initEvents(): void {
-		super.initEvents();
-		easyEvent.addEvent(
-			this.element,
-			['Click','MouseOver','MouseOut','MouseDown','TouchEnd'],
-			this
-		);
-    }
+	public updateDOM(): void {
+		let scene = this.element;
 
-	protected onClick(event: any): void {
-		let targetId: string[] = event.target.id.split('+');
+		while (scene.lastChild) {
+			scene.removeChild(scene.lastChild);
+		}
 
-		if (targetId[0] === 'ave') {
-			let item = this.children[ targetId[1] ];
-			if (item && item.events
-				&& item.events.click
-			) {
-				item.events.click();
-			}
+		this.world.children.forEach( (child: any) => this.addSceneElement(child, scene) );
+	}
+
+	protected addSceneElement(anyGraphic: any, scene: HTMLElement): void {
+		if (anyGraphic.type == GraphicType.OBJECT) {
+			scene.appendChild(anyGraphic);
+		} else
+		if (anyGraphic.type == GraphicType.GROUP) {
+			anyGraphic.children.forEach( (child: any) => this.addSceneElement(child, scene) );
 		}
 	}
 
-	protected onMouseOver(event: any): void {
-		let targetId: string[] = event.target.id.split('+');
+	// protected initEvents(): void {
+	// 	super.initEvents();
+	// 	easyEvent.addEvent(
+	// 		this.element,
+	// 		['Click','MouseOver','MouseOut','MouseDown','TouchEnd'],
+	// 		this
+	// 	);
+    // }
 
-		if (targetId[0] === 'ave') {
-			let item = this.children[ targetId[1] ];
-			if (item && item.events
-				&& item.events.mouseover
-			) {
-				item.events.mouseover();
-			}
-		}
-	}
+	// protected onClick(event: any): void {
+	// 	let targetId: string[] = event.target.id.split('+');
+	//
+	// 	if (targetId[0] === 'ave') {
+	// 		let item = this.childrenList[ targetId[1] ];
+	// 		if (item && item.events
+	// 			&& item.events.click
+	// 		) {
+	// 			item.events.click();
+	// 		}
+	// 	}
+	// }
+	//
+	// protected onMouseOver(event: any): void {
+	// 	let targetId: string[] = event.target.id.split('+');
+	//
+	// 	if (targetId[0] === 'ave') {
+	// 		let item = this.childrenList[ targetId[1] ];
+	// 		if (item && item.events
+	// 			&& item.events.mouseover
+	// 		) {
+	// 			item.events.mouseover();
+	// 		}
+	// 	}
+	// }
+	//
+	// protected onMouseOut(event: any): void {
+	// 	let targetId: string[] = event.target.id.split('+');
+	//
+	// 	if (targetId[0] === 'ave') {
+	// 		let item = this.childrenList[ targetId[1] ];
+	// 		if (item && item.events
+	// 			&& item.events.mouseout
+	// 		) {
+	// 			item.events.mouseout();
+	// 		}
+	// 	}
+	// }
+	//
+	// protected onMouseDown(event: any): void {
+	// 	let targetId: string[] = event.target.id.split('+');
+	//
+	// 	if (targetId[0] === 'ave') {
+	// 		let item = this.childrenList[ targetId[1] ];
+	// 		if (item && item.events
+	// 			&& item.events.mousedown
+	// 		) {
+	// 			item.events.mousedown();
+	// 		}
+	// 	}
+	// }
+	//
+	// protected onTouchEnd(event: any): void {
+	// 	let targetId: string[] = event.target.id.split('+');
+	//
+	// 	if (targetId[0] === 'ave') {
+	// 		let item = this.childrenList[ targetId[1] ];
+	// 		if (item
+	// 			&& item.events
+	// 			&& item.events.touchend
+	// 		) {
+	// 			item.events.touchend();
+	// 		}
+	// 	}
+	// }
 
-	protected onMouseOut(event: any): void {
-		let targetId: string[] = event.target.id.split('+');
-
-		if (targetId[0] === 'ave') {
-			let item = this.children[ targetId[1] ];
-			if (item && item.events
-				&& item.events.mouseout
-			) {
-				item.events.mouseout();
-			}
-		}
-	}
-
-	protected onMouseDown(event: any): void {
-		let targetId: string[] = event.target.id.split('+');
-
-		if (targetId[0] === 'ave') {
-			let item = this.children[ targetId[1] ];
-			if (item && item.events
-				&& item.events.mousedown
-			) {
-				item.events.mousedown();
-			}
-		}
-	}
-
-	protected onTouchEnd(event: any): void {
-		let targetId: string[] = event.target.id.split('+');
-
-		if (targetId[0] === 'ave') {
-			let item = this.children[ targetId[1] ];
-			if (item
-				&& item.events
-				&& item.events.touchend
-			) {
-				item.events.touchend();
-			}
-		}
-	}
-
-	public getHierarchy(): Object {
-        let list: Object = {};
-
-        // let sort = function (item, branch) {
-        //     if (item.children.length === 0) return;
-        //
-        //     item.children.forEach((child) => {
-        //         let name = ave.chooseName(child.name, branch);
-        //
-        //         if (child.type === ave.config.type.GROUP) {
-        //             branch[name] = {};
-        //             sort(child, branch[name]);
-        //         } else {
-        //             branch[name] = child;
-        //         }
-        //     });
-        // }
-        //
-        // sort(this.world, list);
-
-        return list;
-    }
 
 
 }
