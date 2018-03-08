@@ -1,4 +1,5 @@
-import { GraphicPoint, IGraphicPoint } from "./graphic-point"
+import { GraphicType } from "./../config";
+import { GraphicPoint, IGraphicPoint } from "./graphic-point";
 import { Quaternion } from "./quaternion";
 import { Point } from "./point";
 import { Camera } from "./../scene/camera";
@@ -6,6 +7,7 @@ import { ISceneAbstract } from "./../scene/interface/i-scene-abstract";
 
 export interface IGraphicObject extends IGraphicPoint {
 	// _id: number;
+	type: GraphicType;
 	static: boolean;
 	visible: boolean;
 	globalRotation: Point[];
@@ -23,6 +25,7 @@ export interface IGraphicObject extends IGraphicPoint {
 }
 
 export class GraphicObject extends GraphicPoint implements IGraphicObject {
+	public type: GraphicType = GraphicType.OBJECT;
 	public globalRotation: Point[] = [
 		new Point(null, 1,0,0),
 		new Point(null, 0,1,0),

@@ -1,4 +1,5 @@
-import { Group, IGroup } from "./group";
+import { GraphicType } from "./../config";
+import { GraphicParent, IGraphicParent } from "./graphic-parent";
 import { GraphicPoint } from "./graphic-point"
 import { IPoint } from "./point";
 
@@ -9,7 +10,8 @@ interface IGraphicPath {
 	closePath: boolean;
 }
 
-export class GraphicPath extends Group implements IGraphicPath {
+export class GraphicPath extends GraphicParent implements IGraphicPath {
+	public type: GraphicType = GraphicType.OBJECT;
 	public children: GraphicPoint[] = [];
 	public closePath: boolean = false;
 

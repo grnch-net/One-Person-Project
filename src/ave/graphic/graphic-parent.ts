@@ -1,17 +1,17 @@
 import { GraphicObject, IGraphicObject } from "./graphic-object";
 import { Camera } from "./../scene/camera";
 
-export interface IGroup extends IGraphicObject {
+export interface IGraphicParent extends IGraphicObject {
 	moveGlobalPosition(x: number, y: number, z: number): void;
-	updateChildren(): Group;
+	updateChildren(): GraphicParent;
 
 	children: any[];
 }
 
-export abstract class Group extends GraphicObject implements IGroup {
+export abstract class GraphicParent extends GraphicObject implements IGraphicParent {
 	public children: any[] = [];
 
-	public updateChildren(): Group {
+	public updateChildren(): GraphicParent {
 		this.children.forEach((child) => child.update(true));
 		return this;
 	}

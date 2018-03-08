@@ -1,15 +1,15 @@
-import { Group, IGroup } from "./group";
+import { GraphicType } from "./../config";
+import { GraphicParent, IGraphicParent } from "./graphic-parent";
 import { GraphicObject, IGraphicObject } from "./graphic-object";
 
-export interface IGraphicGroup extends IGroup {
+export interface IGraphicGroup extends IGraphicParent {
 	addChild(element: any, index?: number): IGraphicGroup;
 	removeChild(element: any): any;
-
-	children: IGraphicObject[];
 }
 
-export class GraphicGroup extends Group implements IGraphicGroup {
-	public children: GraphicObject[] = [];
+export class GraphicGroup extends GraphicParent implements IGraphicGroup {
+	public type: GraphicType = GraphicType.OBJECT;
+	public children: any[] = [];
 
 	public addChild(graphicObject: GraphicObject, index: number = null): GraphicGroup {
 		if (graphicObject.parent)
