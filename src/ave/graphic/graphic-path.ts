@@ -1,13 +1,16 @@
+import { Group, IGroup } from "./group";
 import { GraphicPoint } from "./graphic-point"
-import { GraphicObject } from "./graphic-object";
 import { IPoint } from "./point";
 
 interface IGraphicPath {
-	closePath: boolean;
 	addPoint(p0: number[], p1?: number[], p2?: number[]): GraphicPath;
+
+	children: GraphicPoint[];
+	closePath: boolean;
 }
 
-export class GraphicPath extends GraphicObject implements IGraphicPath {
+export class GraphicPath extends Group implements IGraphicPath {
+	public children: GraphicPoint[] = [];
 	public closePath: boolean = false;
 
 	public addPoint(p0: number[], p1: number[] = null, p2: number[] = null): GraphicPath {

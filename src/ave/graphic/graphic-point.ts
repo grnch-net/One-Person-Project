@@ -1,5 +1,5 @@
 import { Point } from "./point";
-import { ICamera } from "./../scene/i-camera";
+import { ICamera } from "./../scene/interface/i-camera";
 
 export interface IGraphicPoint {
 	viewPosition: number[];
@@ -49,8 +49,9 @@ export class GraphicPoint implements IGraphicPoint {
 		return true;
 	}
 
-	public update(haveParnet: boolean) {
-		return this.updateGlobalPosition(haveParnet);
+	public update(haveParnet: boolean): boolean {
+		this.updateGlobalPosition(haveParnet);
+		return true;
 	}
 
 	public moveGlobalPosition(x: number, y: number, z: number): void {

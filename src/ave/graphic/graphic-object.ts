@@ -14,12 +14,12 @@ export interface IGraphicObject extends IGraphicPoint {
 	rotation: Point;
 	scale: Point;
 	parent: IGraphicObject;
-	children: IGraphicPoint[];
+	// children: IGraphicPoint[];
 	quaternion: Quaternion;
 	scene: ISceneAbstract;
 
-	moveGlobalPosition(x: number, y: number, z: number): void;
-	updateChildren(): GraphicObject;
+	// moveGlobalPosition(x: number, y: number, z: number): void;
+	// updateChildren(): GraphicObject;
 }
 
 export class GraphicObject extends GraphicPoint implements IGraphicObject {
@@ -32,7 +32,7 @@ export class GraphicObject extends GraphicPoint implements IGraphicObject {
 	public position: Point = new Point( this.updateLocalPosition.bind(this) );
 	public rotation: Point = new Point( this.updateLocalRotation.bind(this) );
 	public scale: Point = new Point( this.updateLocalScale.bind(this), 1, 1, 1 );
-	public children: GraphicPoint[] = [];
+	// public children: GraphicPoint[] = [];
 	public quaternion: Quaternion = new Quaternion();
 	public scene: ISceneAbstract;
 
@@ -52,23 +52,23 @@ export class GraphicObject extends GraphicPoint implements IGraphicObject {
 	}
 
 	protected updateLocalPosition() {
-		// save old position data
-		let move = {
-			x: this.globalPosition.x,
-			y: this.globalPosition.y,
-			z: this.globalPosition.z
-		};
+		// // save old position data
+		// let move = {
+		// 	x: this.globalPosition.x,
+		// 	y: this.globalPosition.y,
+		// 	z: this.globalPosition.z
+		// };
 		// update postion
 		this.updateGlobalPosition();
-		// calculate move
-		move.x = this.globalPosition.x - move.x;
-		move.y = this.globalPosition.y - move.y;
-		move.z = this.globalPosition.z - move.z;
-		// update children
-		this.moveChildren(move.x, move.y, move.z);
+		// // calculate move
+		// move.x = this.globalPosition.x - move.x;
+		// move.y = this.globalPosition.y - move.y;
+		// move.z = this.globalPosition.z - move.z;
+		// // update children
+		// this.moveChildren(move.x, move.y, move.z);
 	}
 
-	protected updateGlobalRotation(haveParnet: boolean): void {
+	protected updateGlobalRotation(haveParnet: boolean = !!this.parent): void {
 		// if (haveParnet) {
 		// 	let parentGlRotate = this.parent.globalRotation;
 		// 	this.globalRotation.axisX.copy(parentGlRotate.axisX);
@@ -103,12 +103,11 @@ export class GraphicObject extends GraphicPoint implements IGraphicObject {
 	}
 
 	protected updateLocalRotation(): void {
-		let haveParnet: boolean = !!this.parent;
-		this.updateGlobalRotation(haveParnet);
-		this.updateChildren();
+		this.updateGlobalRotation();
+		// this.updateChildren();
 	}
 
-	protected updateGlobalScale(haveParnet: boolean): void {
+	protected updateGlobalScale(haveParnet: boolean = !!this.parent): void {
 		if (haveParnet)
 			this.globalScale
 				.copy(this.parent.globalScale)
@@ -119,45 +118,45 @@ export class GraphicObject extends GraphicPoint implements IGraphicObject {
 	}
 
 	protected updateLocalScale(): void {
-		let haveParnet: boolean = !!this.parent;
-		this.updateGlobalScale(haveParnet);
-		this.updateChildren();
+		this.updateGlobalScale();
+		// this.updateChildren();
 	}
 
-	public update(haveParnet: boolean = undefined): boolean {
-		if (!this._visible) return;
-		haveParnet = super.update(haveParnet);
+	public update(haveParnet: boolean = !!this.parent): boolean {
+		if ( this._visible && super.update(haveParnet) ) {
+			this.updateGlobalScale(haveParnet);
+			this.updateGlobalRotation(haveParnet);
+			// this.updateChildren();
+			return true;
+		}
 
-		this.updateGlobalScale(haveParnet);
-		this.updateGlobalRotation(haveParnet);
-		this.updateChildren();
-		return haveParnet;
+		return false;
 	}
 
-	public updateChildren(): GraphicObject {
-		this.children.forEach((child: GraphicPoint) => child.update(true));
-		return this;
-	}
+	// public updateChildren(): GraphicObject {
+	// 	this.children.forEach((child: GraphicPoint) => child.update(true));
+	// 	return this;
+	// }
 
-	public moveGlobalPosition(x: number, y: number, z: number): void {
-		super.moveGlobalPosition(x, y, z);
-		this.moveChildren(x, y, z);
-	}
+	// public moveGlobalPosition(x: number, y: number, z: number): void {
+	// 	super.moveGlobalPosition(x, y, z);
+	// 	// this.moveChildren(x, y, z);
+	// }
 
-	protected moveChildren(x: number, y: number, z: number): void {
-		x *= this.scale.x;
-		y *= this.scale.y;
-		z *= this.scale.x;
-
-		// let matrix = this.globalRotation;
-		// x = x*matrix[0].x + y*matrix[1].x + z*matrix[2].x;
-		// y = x*matrix[0].y + y*matrix[1].y + z*matrix[2].y;
-		// z = x*matrix[0].z + y*matrix[1].z + z*matrix[2].z;
-
-		let point = this.quaternion.vectorRotate({x, y, z});
-
-		this.children.forEach((child: GraphicPoint) => child.moveGlobalPosition(point.x, point.y, point.z));
-	}
+	// protected moveChildren(x: number, y: number, z: number): void {
+	// 	x *= this.scale.x;
+	// 	y *= this.scale.y;
+	// 	z *= this.scale.x;
+	//
+	// 	// let matrix = this.globalRotation;
+	// 	// x = x*matrix[0].x + y*matrix[1].x + z*matrix[2].x;
+	// 	// y = x*matrix[0].y + y*matrix[1].y + z*matrix[2].y;
+	// 	// z = x*matrix[0].z + y*matrix[1].z + z*matrix[2].z;
+	//
+	// 	let point = this.quaternion.vectorRotate({x, y, z});
+	//
+	// 	this.children.forEach((child: GraphicPoint) => child.moveGlobalPosition(point.x, point.y, point.z));
+	// }
 
 	public rendering(camera: Camera): boolean {
 		if (!this._visible) return false;
@@ -169,7 +168,7 @@ export class GraphicObject extends GraphicPoint implements IGraphicObject {
 		// }
 
 		super.rendering(camera);
-		this.children.forEach((child: GraphicPoint) => child.rendering(camera));
+		// this.children.forEach((child: GraphicPoint) => child.rendering(camera));
 		return true;
 	}
 }

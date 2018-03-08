@@ -8,17 +8,8 @@ import { easyEvent } from "../../utils/easy-event";
 
 export interface ISceneSVG {
 	// newChildIndex: Object;
-	addElement(graphicObject: any, parent: ISVGGroup, index: number): number;
+	updateDOM(): SceneSVG;
 }
-
-// TODO: create and change this(let ave) to config
-let ave = { config: { type: {
-	GROUP: 'group',
-	GRAPHIC: 'graphic',
-	SPRITESHEET: 'spritesheet',
-	FILTER: 'filter',
-	GRADIENT: 'gradient'
-}}};
 
 export class SceneSVG extends SceneAbstract implements ISceneSVG {
 	// public newChildIndex: Object;
@@ -28,9 +19,11 @@ export class SceneSVG extends SceneAbstract implements ISceneSVG {
 	constructor(parameters: ISceneAbstractParameters) {
 		super(parameters);
 
-		if (!this.element) return;
+		if (!this.element) {
+			console.warn('this.element is undefined');
+			return;
+		}
 
-        // this.initChildIndexing();
 
 		// this.prefabs = new ave.Prefabs({
 		// 	scene: this
@@ -61,45 +54,12 @@ export class SceneSVG extends SceneAbstract implements ISceneSVG {
         });
     }
 
-	// protected initChildIndexing() {
-    //     let _scene = this;
-    //     this.newChildIndex = {
-    //         get group() {
-    //             return _scene.searchFreeIndex(ave.config.type.GROUP);
-    //         },
-    //         get graphic() {
-	// 			return _scene.searchFreeIndex(ave.config.type.GRAPHIC);
-    //         },
-	// 		get spriteSheet() {
-	// 			return _scene.searchFreeIndex(ave.config.type.SPRITESHEET);
-	// 		},
-	// 		get filter() {
-	// 			return _scene.searchFreeIndex(ave.config.type.FILTER);
-	// 		},
-	// 		get gradient() {
-	// 			return _scene.searchFreeIndex(ave.config.type.GRADIENT);
-	// 		},
-    //     };
-    // }
-
-	// private searchFreeIndex(key: string): number {
-	// 	let ind: number = 0;
-	//
-	// 	while (this.childrenList[key+'-'+ind] !== undefined) {
-	// 		ind++;
-	// 	}
-	//
-	// 	return ind;
-	// }
-
 	protected createWorld(): void {
 		super.createWorld();
 		// this.world.position.set(this.scene_width / 2, this.scene_height / 2);
-
-        // this.element.appendChild(this.world.element);
     }
 
-	public updateDOM(): void {
+	public updateDOM(): SceneSVG {
 		let scene = this.element;
 
 		while (scene.lastChild) {
@@ -107,6 +67,8 @@ export class SceneSVG extends SceneAbstract implements ISceneSVG {
 		}
 
 		this.world.children.forEach( (child: any) => this.addSceneElement(child, scene) );
+
+		return this;
 	}
 
 	protected addSceneElement(anyGraphic: any, scene: HTMLElement): void {
