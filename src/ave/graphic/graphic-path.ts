@@ -26,7 +26,7 @@ export class GraphicPath extends GraphicParent implements IGraphicPath {
 	protected createPoint(x?: number, y?: number, z?: number): GraphicPoint {
 		let newPoint = new GraphicPoint();
 		newPoint.parent = this;
-		(newPoint.position as IPoint).set(x, y, z);
+		(newPoint.position as IPoint).set(x, -y, z);
 		this.children.push( newPoint );
 		return newPoint;
 	}

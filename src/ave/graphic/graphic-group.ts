@@ -8,10 +8,10 @@ export interface IGraphicGroup extends IGraphicParent {
 }
 
 export class GraphicGroup extends GraphicParent implements IGraphicGroup {
-	public type: GraphicType = GraphicType.OBJECT;
+	public type: GraphicType = GraphicType.GROUP;
 	public children: any[] = [];
 
-	public addChild(graphicObject: GraphicObject, index: number = null): GraphicGroup {
+	public addChild(graphicObject: any, index: number = null): GraphicGroup {
 		if (graphicObject.parent)
 			(graphicObject.parent as GraphicGroup).removeChild(graphicObject);
 
@@ -25,12 +25,12 @@ export class GraphicGroup extends GraphicParent implements IGraphicGroup {
 		return this;
 	}
 
-	public removeChild(graphicObject: GraphicObject): GraphicGroup {
+	public removeChild(graphicObject: any): GraphicGroup | null {
 		let index = this.children.indexOf(graphicObject);
 
 		if (index < 0) {
 			console.warn('Element is missing on group.');
-			return;
+			return null;
 		}
 
 		this.children.splice(index, 1);

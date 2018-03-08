@@ -1,20 +1,17 @@
 import { GraphicType } from './../config';
 import { SceneAbstract, ISceneAbstractParameters } from './../scene/scene-abstract';
-import { ISVGGroup } from './svg-group';
-import { ISVGObject } from './svg-object';
-import { World } from "./../graphic/world";
+import { ISceneAbstract } from "./../scene/interface/i-scene-abstract";
+import { SVGWorld } from "./svg-world";
 import { easyHTML } from "../../utils/easy-html";
 import { easyEvent } from "../../utils/easy-event";
 
-export interface ISceneSVG {
-	// newChildIndex: Object;
+export interface ISceneSVG extends ISceneAbstract {
 	updateDOM(): SceneSVG;
 }
 
 export class SceneSVG extends SceneAbstract implements ISceneSVG {
-	// public newChildIndex: Object;
-
 	// protected prefabs: Prefabs;
+	protected isUpdateDOM: boolean = false;
 
 	constructor(parameters: ISceneAbstractParameters) {
 		super(parameters);
@@ -55,25 +52,32 @@ export class SceneSVG extends SceneAbstract implements ISceneSVG {
     }
 
 	protected createWorld(): void {
-		super.createWorld();
-		// this.world.position.set(this.scene_width / 2, this.scene_height / 2);
+		this.world = new SVGWorld();
+		this.world.scene = this;
+		this.world.position.set(this.scene_width / 2, this.scene_height / 2);
     }
 
 	public updateDOM(): SceneSVG {
-		let scene = this.element;
-
-		while (scene.lastChild) {
-			scene.removeChild(scene.lastChild);
+		if (this.isUpdateDOM == false) {
+			this.isUpdateDOM = true;
+			requestAnimationFrame( this._updateDOM.bind(this) );
 		}
-
-		this.world.children.forEach( (child: any) => this.addSceneElement(child, scene) );
 
 		return this;
 	}
 
+	protected _updateDOM(): void {
+		this.isUpdateDOM = false;
+		let scene = this.element;
+		while (scene.lastChild) {
+			scene.removeChild(scene.lastChild);
+		}
+		this.world.children.forEach( (child: any) => this.addSceneElement(child, scene) );
+	}
+
 	protected addSceneElement(anyGraphic: any, scene: HTMLElement): void {
 		if (anyGraphic.type == GraphicType.OBJECT) {
-			scene.appendChild(anyGraphic);
+			scene.appendChild(anyGraphic.element);
 		} else
 		if (anyGraphic.type == GraphicType.GROUP) {
 			anyGraphic.children.forEach( (child: any) => this.addSceneElement(child, scene) );

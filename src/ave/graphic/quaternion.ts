@@ -49,7 +49,7 @@ export class Quaternion implements IQuaternionObject {
 	}
 
 	protected gradusToRadian(value: number): number {
-		return Math.PI/180 *-value;
+		return Math.PI/180 *value;
 	}
 
 	protected vector_normalize(x: number, y: number, z: number) {

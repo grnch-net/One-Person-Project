@@ -59,7 +59,8 @@ export abstract class SceneAbstract implements ISceneAbstract {
 
 	protected createWorld(): void {
 		this.world = new World();
-		this.world.scene = this;	}
+		this.world.scene = this;
+	}
 
 	protected initEvents(): void {
 		easyEvent.addEvent(window, 'Resize', (e:any) => this.onResize(e) );
