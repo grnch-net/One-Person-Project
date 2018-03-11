@@ -2,6 +2,7 @@ import { GraphicType } from "./../config";
 import { GraphicPoint, IGraphicPoint } from "./graphic-point";
 import { Quaternion } from "./quaternion";
 import { Point } from "./point";
+import { GraphicAnimation } from "./graphic-animation";
 import { Camera } from "./../scene/camera";
 import { ISceneAbstract } from "./../scene/interface/i-scene-abstract";
 
@@ -16,6 +17,7 @@ export interface IGraphicObject extends IGraphicPoint {
 	scale: Point;
 	parent: IGraphicObject;
 	quaternion: Quaternion;
+	animation: GraphicAnimation;
 	scene: ISceneAbstract;
 }
 
@@ -32,6 +34,7 @@ export class GraphicObject extends GraphicPoint implements IGraphicObject {
 	public scale: Point = new Point( this.updateLocalScale.bind(this), 1, 1, 1 );
 	// public children: GraphicPoint[] = [];
 	public quaternion: Quaternion = new Quaternion();
+	public animation: GraphicAnimation = new GraphicAnimation(this);
 	public scene: ISceneAbstract;
 
 	// public _id: number;
