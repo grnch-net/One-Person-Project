@@ -1,6 +1,5 @@
 import { IAnimationModel, IAnimationModelParameters, IAnimationModelOnUpdate } from "./i-animation-model";
 import { IAnimationAbstract, IAddParameters } from "./i-animation-abstract";
-import { isUndefined } from "./../../utils/easy-check";
 
 export class AnimationModel implements IAnimationModel {
 	protected _time: number = 0;
@@ -16,13 +15,13 @@ export class AnimationModel implements IAnimationModel {
 	public onComplete: Function;
 
 	constructor(parameters: IAnimationModelParameters) {
-		if (!isUndefined(parameters.active))		this.active = parameters.active;
-		if (!isUndefined(parameters.timeLength))	this.timeLength = parameters.timeLength;
-		if (!isUndefined(parameters.delay))			this.delay = parameters.delay;
-		if (!isUndefined(parameters.key))			this.key = parameters.key;
-		if (!isUndefined(parameters.onStart))		this.onStart = parameters.onStart;
-		if (!isUndefined(parameters.onUpdate))		this.onUpdate = parameters.onUpdate;
-		if (!isUndefined(parameters.onComplete))	this.onComplete = parameters.onComplete;
+		if (parameters.active)		this.active = parameters.active;
+		if (parameters.timeLength)	this.timeLength = parameters.timeLength;
+		if (parameters.delay)		this.delay = parameters.delay;
+		if (parameters.key)			this.key = parameters.key;
+		if (parameters.onStart)		this.onStart = parameters.onStart;
+		if (parameters.onUpdate)	this.onUpdate = parameters.onUpdate;
+		if (parameters.onComplete)	this.onComplete = parameters.onComplete;
 	}
 
 	get time(): number { return this._time; }

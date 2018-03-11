@@ -34,7 +34,7 @@ export class GraphicGroup extends GraphicParent implements IGraphicGroup {
 		}
 
 		this.children.splice(index, 1);
-		delete graphicObject.parent;
+		graphicObject.parent = null;
 
 		return this;
 	}

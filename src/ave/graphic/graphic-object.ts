@@ -6,7 +6,6 @@ import { Camera } from "./../scene/camera";
 import { ISceneAbstract } from "./../scene/interface/i-scene-abstract";
 
 export interface IGraphicObject extends IGraphicPoint {
-	// _id: number;
 	type: GraphicType;
 	static: boolean;
 	visible: boolean;
@@ -16,12 +15,8 @@ export interface IGraphicObject extends IGraphicPoint {
 	rotation: Point;
 	scale: Point;
 	parent: IGraphicObject;
-	// children: IGraphicPoint[];
 	quaternion: Quaternion;
 	scene: ISceneAbstract;
-
-	// moveGlobalPosition(x: number, y: number, z: number): void;
-	// updateChildren(): GraphicObject;
 }
 
 export class GraphicObject extends GraphicPoint implements IGraphicObject {
@@ -50,7 +45,13 @@ export class GraphicObject extends GraphicPoint implements IGraphicObject {
 	get parent(): IGraphicObject { return this._parent }
 	set parent(value: IGraphicObject) {
 		this._parent = value;
-		this.scene = value.scene;
+
+		if (value) {
+			this.scene = value.scene;
+		} else {
+			this.scene = null;
+		}
+
 		this.update();
 	}
 
