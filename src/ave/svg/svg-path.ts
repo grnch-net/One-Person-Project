@@ -14,31 +14,41 @@ export class SVGPath extends GraphicPath implements ISVGPath {
 
 		let define: string = '';
 
-		let startPoint;
 		if (this.children[1]) {
-			startPoint = this.children[1].viewPosition;
-			define += `M ${startPoint.toString()}`;
+			define += `M ${this.children[1].viewPosition.toString()}`;
 		} else {
 			return true;
 		}
 
 		let length = this.children.length;
 		for(let i=4; i<length; i+=3) {
-			let p0 = this.children[i].viewPosition;
-			let p1 = this.children[i-2].viewPosition;
-			let p2 = this.children[i-1].viewPosition;
-			define += ` C ${p1.toString()} ${p2.toString()} ${p0.toString()}`;
+			this.generateDefineElement([
+				this.children[i-3].viewPosition,
+				this.children[i-2].viewPosition,
+				this.children[i-1].viewPosition,
+				this.children[i].viewPosition
+			]);
 		}
 
 		if (this.closePath) {
-			let p0 = startPoint;
-			let p1 = this.children[length-1].viewPosition;
-			let p2 = this.children[0].viewPosition;
-			define += ` C ${p1.toString()} ${p2.toString()} ${p0.toString()}`;
+			this.generateDefineElement([
+				this.children[length-2].viewPosition,
+				this.children[length-1].viewPosition,
+				this.children[0].viewPosition,
+				this.children[1].viewPosition
+			]);
 		}
 
 		easyHTML.setAttribute(this.element, { 'd': define });
 
 		return true;
+	}
+
+	protected generateDefineElement(p: number[][]) {
+		if (!p[1] && !p[2]) return ` L ${p[3].toString()}`;
+
+		if (!p[1]) p[1] = p[0];
+		if (!p[2]) p[2] = p[3];
+		return ` C ${p[1].toString()} ${p[2].toString()} ${p[3].toString()}`;
 	}
 }
