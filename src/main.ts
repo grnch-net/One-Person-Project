@@ -1,4 +1,4 @@
-console.info('%c Version: 51 ', 'background: #232627; color: #bada55');
+console.info('%c Version: 54 ', 'background: #232627; color: #bada55');
 
 import { AVE } from "./ave/ave";
 
@@ -9,21 +9,49 @@ let scene = new AVE.Scene({ width: 800, height: 600});
 
 let animator = scene.animator;
 
-let path = new AVE.GraphicPath();
-path.addPoint([0, 100])
-	.addPoint([100, 0])
-	.addPoint([0, 0]);
-path.closePath = true;
-
 let group = new AVE.GraphicGroup();
-group.position.set(0, 100);
-group.scale.set(2, 1);
+group.position.set(0, 0);
+group.scale.set(1, 1);
 group.rotation.set(0, 0, 0);
 scene.world.addChild(group);
-group.addChild(path);
+
+let createSquare = () => {
+	let square = new AVE.GraphicPath();
+	square.addPoint([-50, 50])
+	.addPoint([50, 50])
+	.addPoint([50, -50])
+	.addPoint([-50, -50]);
+	square.closePath = true;
+	group.addChild(square);
+	return square;
+}
+
+let figure = [];
+
+figure[0] = createSquare();
+figure[0].position.z = -150;
+
+figure[1] = createSquare();
+figure[1].position.z = 150;
+
+figure[2] = createSquare();
+figure[2].rotation.y = 90;
+figure[2].position.x = -150;
+
+figure[3] = createSquare();
+figure[3].rotation.y = 90;
+figure[3].position.x = 150;
+
+figure[4] = createSquare();
+// figure[5].rotation.x = 90;
+figure[4].rotation.y = 90;
+figure[4].position.y = 150;
+
+figure[5] = createSquare();
+// figure[5].rotation.x = 90;
+figure[5].position.y = -150;
 
 scene.render();
-console.log(path.element, path);
 
 
 let anim = () => animator.add(10000, {

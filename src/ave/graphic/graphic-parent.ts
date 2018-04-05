@@ -12,7 +12,10 @@ export abstract class GraphicParent extends GraphicObject implements IGraphicPar
 	public children: any[] = [];
 
 	public updateChildren(): GraphicParent {
-		this.children.forEach((child) => child.update(true));
+		this.children.forEach((child) => {
+			if (!child) return;
+			child.update(true);
+		});
 		return this;
 	}
 
@@ -70,12 +73,18 @@ export abstract class GraphicParent extends GraphicObject implements IGraphicPar
 
 		let point = this.quaternion.vectorRotate({x, y, z});
 
-		this.children.forEach((child) => child.moveGlobalPosition(point.x, point.y, point.z));
+		this.children.forEach((child) => {
+			if (!child) return;
+			child.moveGlobalPosition(point.x, point.y, point.z)
+		});
 	}
 
 	public rendering(camera: Camera): boolean {
 		if (super.rendering(camera) ) {
-			this.children.forEach((child) => child.rendering(camera));
+			this.children.forEach((child) => {
+				if (!child) return;
+				child.rendering(camera)
+			});
 			return true;
 		}
 
