@@ -1,12 +1,11 @@
+import { SVGObject } from "./svg-object";
 import { GraphicPath } from "./../graphic/graphic-path";
 import { Camera } from "./../scene/camera";
 import { easyHTML } from "../../utils/easy-html";
 
-interface ISVGPath {
-	element: HTMLElement;
-}
+interface ISVGPath {}
 
-export class SVGPath extends GraphicPath implements ISVGPath {
+export class SVGPath extends SVGObject(GraphicPath) implements ISVGPath {
 	public element: HTMLElement = easyHTML.createElement({ type: 'path' });
 
 	public rendering(camera: Camera): boolean {

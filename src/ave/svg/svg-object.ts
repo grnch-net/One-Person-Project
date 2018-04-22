@@ -1,9 +1,11 @@
-import { GraphicObject, IGraphicObject } from './../graphic/graphic-object';
+import { GraphicObject } from './../graphic/graphic-object';
 
-export interface ISVGObject extends IGraphicObject {
+export interface ISVGObject {
 	element: HTMLElement;
 }
 
-export abstract class SVGObject extends GraphicObject implements ISVGObject {
-	element: HTMLElement;
+export function SVGObject(parentClass: any = GraphicObject) {
+	return class extends parentClass implements ISVGObject {
+		public element: HTMLElement;
+	}
 }
