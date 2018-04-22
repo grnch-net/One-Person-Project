@@ -15,22 +15,24 @@ export interface IGraphicObject extends IGraphicPoint {
 	rotation: Point;
 	scale: Point;
 	parent: IGraphicObject;
+	globalQuaternion: Quaternion;
 	quaternion: Quaternion;
 	scene: ISceneAbstract;
 }
 
 export class GraphicObject extends GraphicPoint implements IGraphicObject {
 	public type: GraphicType = GraphicType.OBJECT;
+	public position: Point = new Point( this.updateLocalPosition.bind(this) );
 	public globalRotation: Point[] = [
 		new Point(null, 1,0,0),
 		new Point(null, 0,1,0),
 		new Point(null, 0,0,1)
 	];
-	public globalScale: Point = new Point(null, 1, 1, 1);
-	public position: Point = new Point( this.updateLocalPosition.bind(this) );
 	public rotation: Point = new Point( this.updateLocalRotation.bind(this) );
+	public globalScale: Point = new Point(null, 1, 1, 1);
 	public scale: Point = new Point( this.updateLocalScale.bind(this), 1, 1, 1 );
 	// public children: GraphicPoint[] = [];
+	public globalQuaternion: Quaternion = new Quaternion();
 	public quaternion: Quaternion = new Quaternion();
 	public scene: ISceneAbstract;
 
@@ -89,28 +91,25 @@ export class GraphicObject extends GraphicPoint implements IGraphicObject {
 		// this.globalRotation.axisZ.rotate(...args);
 
 		if (haveParnet) {
-			//TODO: optimization, create localQauternion
-			this.quaternion
-				.copy(new Quaternion())
-				.multiplyEuler(this.rotation.x, this.rotation.y, this.rotation.z)
+			this.globalQuaternion
+				.copy(this.quaternion)
 				.multiply(this.parent.quaternion)
-		} else {
-			this.quaternion
-				.setFromEuler(this.rotation.x, this.rotation.y, this.rotation.z);
 		}
 
-		let matrix = this.quaternion.getMatrix();
-		this.setGlobalRotateAxis(0, ...matrix[0]);
-		this.setGlobalRotateAxis(1, ...matrix[1]);
-		this.setGlobalRotateAxis(2, ...matrix[2]);
+		let matrix = this.globalQuaternion.getMatrix();
+		this.setGlobalRotateAxis(0, ...matrix[0]); // X axis
+		this.setGlobalRotateAxis(1, ...matrix[1]); // Y axis
+		this.setGlobalRotateAxis(2, ...matrix[2]); // Z axis
 	}
 
-	protected setGlobalRotateAxis(axis: number, x?: number, y?: number, z?: number) {
+	private setGlobalRotateAxis(axis: number, x?: number, y?: number, z?: number) {
 		this.globalRotation[axis].set(x, y, z);
 	}
 
 	protected updateLocalRotation(): void {
+		this.quaternion.setFromEuler(this.rotation.x, this.rotation.y, this.rotation.z);
 		this.updateGlobalRotation();
+
 		// this.updateChildren();
 	}
 
