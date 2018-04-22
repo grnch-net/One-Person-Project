@@ -27,8 +27,8 @@ export class SVGPath extends GraphicPath implements ISVGPath {
 			let p2 = this.children[i-1];
 			let p3 = this.children[i];
 			define += this.generateDefineElement([
-				p0? p0.viewPosition : null,
-				p1? p1.viewPosition : null,
+				p0? p0.viewPosition: null,
+				p1? p1.viewPosition: null,
 				p2? p2.viewPosition: null,
 				p3? p3.viewPosition: null
 			]);

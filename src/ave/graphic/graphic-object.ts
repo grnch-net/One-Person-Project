@@ -87,10 +87,13 @@ export class GraphicObject extends GraphicPoint implements IGraphicObject {
 		// this.globalRotation.axisX.rotate(...args);
 		// this.globalRotation.axisY.rotate(...args);
 		// this.globalRotation.axisZ.rotate(...args);
+
 		if (haveParnet) {
+			//TODO: optimization, create localQauternion
 			this.quaternion
-				.copy(this.parent.quaternion)
-				.multiplyEuler(this.rotation.x, this.rotation.y, this.rotation.z);
+				.copy(new Quaternion())
+				.multiplyEuler(this.rotation.x, this.rotation.y, this.rotation.z)
+				.multiply(this.parent.quaternion)
 		} else {
 			this.quaternion
 				.setFromEuler(this.rotation.x, this.rotation.y, this.rotation.z);

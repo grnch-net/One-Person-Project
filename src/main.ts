@@ -1,4 +1,4 @@
-console.info('%c Version: 54 ', 'background: #232627; color: #bada55');
+console.info('%c Version: 67 ', 'background: #232627; color: #bada55');
 
 import { AVE } from "./ave/ave";
 
@@ -26,7 +26,7 @@ let createSquare = () => {
 	return square;
 }
 
-let figure = [];
+let figure: any[] = [];
 
 figure[0] = createSquare();
 figure[0].position.z = -150;
@@ -43,12 +43,12 @@ figure[3].rotation.y = 90;
 figure[3].position.x = 150;
 
 figure[4] = createSquare();
-// figure[5].rotation.x = 90;
+figure[4].rotation.x = 90;
 figure[4].rotation.y = 90;
 figure[4].position.y = 150;
 
 figure[5] = createSquare();
-// figure[5].rotation.x = 90;
+figure[5].rotation.x = 90;
 figure[5].position.y = -150;
 
 scene.render();
@@ -57,6 +57,15 @@ scene.render();
 let anim = () => animator.add(10000, {
 	onUpdate: (p) => {
 		group.rotation.y = 360 * p;
+
+		let easeBack = Math.abs(1 - 2*p);
+		figure[0].position.z = -150 * easeBack -50;
+		figure[1].position.z = 150 * easeBack +50;
+		figure[2].position.x = -150 * easeBack -50;
+		figure[3].position.x = 150 * easeBack +50;
+		figure[4].position.y = 150 * easeBack +50;
+		figure[5].position.y = -150 * easeBack -50;
+
 		scene.render();
 	},
 	onComplete: anim
