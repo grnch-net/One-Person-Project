@@ -1,5 +1,6 @@
 import { GraphicObject, IGraphicObject } from "./graphic-object";
 import { Camera } from "./../scene/camera";
+import { GraphicType } from "./../config";
 
 export interface IGraphicParent extends IGraphicObject {
 	moveGlobalPosition(x: number, y: number, z: number): void;
@@ -81,10 +82,23 @@ export abstract class GraphicParent extends GraphicObject implements IGraphicPar
 
 	public rendering(camera: Camera): boolean {
 		if (super.rendering(camera) ) {
-			this.children.forEach((child) => {
-				if (!child) return;
-				child.rendering(camera)
-			});
+			// TODO: code review
+			if (this.type == GraphicType.OBJECT) {
+				let zIndex: number;
+				this.children.forEach((child) => {
+					if (!child) return;
+					child.rendering(camera)
+					zIndex = child.globalPosition.z;
+				});
+				if (zIndex !== undefined) {
+					camera.addToViewQueue(zIndex, this);
+				}
+			} else {
+				this.children.forEach((child) => {
+					if (!child) return;
+					child.rendering(camera)
+				});
+			}
 			return true;
 		}
 

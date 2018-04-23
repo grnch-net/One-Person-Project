@@ -166,6 +166,7 @@ export class GraphicObject extends GraphicPoint implements IGraphicObject {
 
 	public rendering(camera: Camera): boolean {
 		if (!this._visible) return false;
+		// camera.addToViewQueue(this.globalPosition.z, this);
 		if (this.static && this.viewPosition) return false;
 
 		// if (!camera) {

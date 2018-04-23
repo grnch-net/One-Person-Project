@@ -5,6 +5,9 @@ export interface ICamera {
 	scene: any;
 	horizontPoint: IPoint;
 	UI: IUserInterface;
+	viewQueue: any;
 
+	clearViewQueue(): void;
+	addToViewQueue(zIndex: number, graphicObject: any): void;
 	renderPoint(position: IPoint): number[];
 }

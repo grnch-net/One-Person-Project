@@ -14,14 +14,10 @@ export class SVGGroup extends GraphicGroup implements ISVGGroup {
 
 	public addChild(graphicObject: ISVGObject, index: number = null): SVGGroup {
 		super.addChild(graphicObject, index);
-		(this.scene as ISceneSVG).updateDOM();
 		return this;
 	}
 
 	public removeChild(graphicObject: ISVGObject): SVGGroup | null {
-		if (super.removeChild(graphicObject) != null) {
-			(this.scene as ISceneSVG).updateDOM();
-		}
-		return this;
+		return super.removeChild(graphicObject);
 	}
 }
