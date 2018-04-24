@@ -1,56 +1,54 @@
+import { AnimationType } from "../config";
 import { AnimationAbstract } from "./animation-abstract";
-import { AnimationGroup } from "./animation-group";
-import { AnimationModel } from "./animation-model";
-import { IAddParameters } from "./i-animation-abstract";
+import { IAnimationAbstract, IAnimationAbstractParameter, IAddParameters } from "./i-animation-abstract";
+import { AnimationGroup, IAnimationGroup } from "./animation-group";
 
-export interface IAnimator {
-	active: boolean;
-	update(nowTime: number): void;
-	createGroup(active?: boolean): AnimationGroup;
+export interface IAnimator extends IAnimationAbstract {
+	type: AnimationType;
+	createGroup(active?: boolean): IAnimationGroup;
 }
 
-export interface IAnimatorParameter {
-	active?: boolean;
-}
+export interface IAnimatorParameter extends IAnimationAbstractParameter {}
 
 export class Animator extends AnimationAbstract implements IAnimator {
 	protected _active: boolean = true;
 	protected lastTime: number;
 
-	constructor(parameters: IAnimatorParameter = {}) {
-		super();
+	public get type(): AnimationType { return AnimationType.ANIMATOR };
 
-		this.lastTime = performance.now();
-		if (parameters.active) this._active = parameters.active;
-
-		requestAnimationFrame(this.update.bind(this));
-	}
-
-	get active(): boolean { return this._active; }
-
-	set active(value: boolean) {
+	public get active(): boolean { return this._active; }
+	public set active(value: boolean) {
 		if (value == this._active) return;
 
 		this._active = value;
 
 		if (value === true) {
 			this.lastTime = performance.now();
-			requestAnimationFrame(this.update.bind(this));
+			requestAnimationFrame(this.updatePerFrame.bind(this));
 		}
 	}
 
-	public update(nowTime: number): void {
+	constructor(parameters: IAnimatorParameter = {}) {
+		super(parameters);
+
+		this.lastTime = performance.now();
+		if (parameters.active) this._active = parameters.active;
+
+		requestAnimationFrame(this.updatePerFrame.bind(this));
+	}
+
+	protected updatePerFrame(nowTime: number): void {
 		if (!this.active) return;
 
 		let frameTime = nowTime - this.lastTime;
 		this.lastTime = nowTime;
 
-		super.update(frameTime);
+		this._update(frameTime);
 
-		requestAnimationFrame(this.update.bind(this));
+		requestAnimationFrame(this.updatePerFrame.bind(this));
 	}
 
-	public createGroup(active: boolean = true): AnimationGroup {
+	public createGroup(active: boolean = true): IAnimationGroup {
 		let group =  new AnimationGroup({ active: active });
 		return this.addGroup(group);
 	}

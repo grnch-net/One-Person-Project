@@ -1,14 +1,15 @@
-import { AnimationModel } from "./animation-model";
-import { AnimationGroup } from "./animation-group";
+import { IAnimationModel } from "./i-animation-model";
+import { IAnimationGroup } from "./animation-group";
 
 export interface IAnimationAbstract {
-	speed: number;
-	add(time: number, parameters: IAddParameters): AnimationModel;
-	remove(animation: AnimationModel|number, playCallback?: boolean): AnimationModel;
-	addGroup(group: AnimationGroup): AnimationGroup;
-	removeGroup(group: AnimationGroup): AnimationGroup;
-	timeout( callback: Function, time: number, active?: boolean): AnimationModel;
-	update(frameTime: number): void;
+	active: boolean;
+	speedMultiply: number;
+
+	add(time: number, parameters: IAddParameters): IAnimationModel;
+	remove(animation: IAnimationModel|number, playCallback?: boolean): IAnimationModel;
+	addGroup(group: IAnimationGroup): IAnimationGroup;
+	removeGroup(group: IAnimationGroup): IAnimationGroup;
+	timeout( callback: Function, time: number, active?: boolean): IAnimationModel;
 }
 
 export interface IAddParameters {
@@ -18,4 +19,9 @@ export interface IAddParameters {
 	onUpdate?(progress?: number): void,
 	onComplete?: Function,
 	key?: string
+}
+
+export interface IAnimationAbstractParameter {
+	active?: boolean;
+	speedMultiply?: number;
 }
