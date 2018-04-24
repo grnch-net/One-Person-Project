@@ -1,6 +1,8 @@
+import { AnimationType } from "../config";
 import { IAnimationAbstract, IAddParameters } from "./i-animation-abstract"
 
 export interface IAnimationModel {
+	type: AnimationType;
 	parent: IAnimationAbstract;
 	_animationComplete(): void;
 	add(time: number, parameters: IAddParameters): IAnimationModel;

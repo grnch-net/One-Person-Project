@@ -1,17 +1,22 @@
-import { IAnimationAbstract, IAddParameters } from "./i-animation-abstract"
+import { AnimationType } from "../config";
+import { IAnimationAbstract, IAddParameters, IAnimationAbstractParameter } from "./i-animation-abstract"
+import { IAnimationModel } from "./i-animation-model";
 import { AnimationModel } from "./animation-model";
-import { AnimationGroup } from "./animation-group";
+import { IAnimationGroup } from "./animation-group";
 
 export abstract class AnimationAbstract implements IAnimationAbstract {
-	public speed: number = 1;
+	public active: boolean = true;
+	public speedMultiply: number = 1;
 
-	protected stack: (AnimationModel | AnimationGroup)[] = [];
-	protected keyList: { [key: string]: AnimationModel } = {};
+	protected stack: (IAnimationModel | IAnimationGroup)[] = [];
+	protected keyList: { [key: string]: IAnimationModel } = {};
 
-	constructor() {}
+	constructor(parameters: IAnimationAbstractParameter) {
+		if (parameters.active) this.active = parameters.active;
+	}
 
-	public add(time: number = 0, parameters: IAddParameters): AnimationModel {
-		let model: AnimationModel = new AnimationModel({ ...parameters, timeLength: time });
+	public add(time: number = 0, parameters: IAddParameters): IAnimationModel {
+		let model: IAnimationModel = new AnimationModel({ ...parameters, timeLength: time });
 
 		let key = model.key;
 		if (key) {
@@ -25,7 +30,7 @@ export abstract class AnimationAbstract implements IAnimationAbstract {
 		return model;
 	}
 
-	public remove(animation: AnimationModel|number, playCallback: boolean = false): AnimationModel {
+	public remove(animation: IAnimationModel|number, playCallback: boolean = false): IAnimationModel {
 		let index: number;
 
 		if (typeof animation == 'number')
@@ -38,7 +43,7 @@ export abstract class AnimationAbstract implements IAnimationAbstract {
 			return;
 		}
 
-		let model: AnimationModel = this.stack.splice(index, 1)[0] as AnimationModel;
+		let model: IAnimationModel = this.stack.splice(index, 1)[0] as IAnimationModel;
 
 		if (playCallback) model._animationComplete();
 
@@ -48,32 +53,26 @@ export abstract class AnimationAbstract implements IAnimationAbstract {
 			return model;
 	}
 
-	public timeout(onComplete: Function, time: number, active: boolean = true): AnimationModel {
+	public timeout(onComplete: Function, time: number, active: boolean = true): IAnimationModel {
 		return this.add(time, { onComplete, active });
 	}
 
-	public addGroup(group: AnimationGroup): AnimationGroup {
+	public addGroup(group: IAnimationGroup): IAnimationGroup {
 		this.stack.push(group);
 		return group;
 	}
 
-	public removeGroup(group: AnimationGroup): AnimationGroup {
+	public removeGroup(group: IAnimationGroup): IAnimationGroup {
 		let index = this.stack.indexOf(group);
 
 		if (index > -1) {
-			group._canRemove = true;
+			group.canRemove = true;
 			return group;
 		}
 	}
 
-	public createGroup(active: boolean = true) {
-		// Rewrite on AnimationGroup class.
-		console.error('Need to override(rewrite) this method.');
-		return { active } as AnimationGroup;
-	}
-
-	public update(frameTime: number): void {
-		frameTime *= this.speed;
+	protected _update(frameTime: number): void {
+		frameTime *= this.speedMultiply;
 		for (let index = this.stack.length -1; index > -1; index--) {
 			let animation = this.stack[index];
 
@@ -81,21 +80,26 @@ export abstract class AnimationAbstract implements IAnimationAbstract {
 
 			if (animation.delay > 0) {
 				animation.delay -= frameTime;
-				break;
+
+				if (animation.delay <= 0) {
+					frameTime -= animation.delay;
+				} else continue;
 			}
 
-			if (animation instanceof AnimationModel) {
-				animation.time += frameTime;
-				let progress = animation.time / animation.timeLength;
+			if (animation.type == AnimationType.MODEL) {
+				let model = animation as IAnimationModel;
+				model.time += frameTime;
+				let progress = model.time / model.timeLength;
 				if (progress > 1) progress = 1;
-				if (animation.onUpdate) animation.onUpdate(progress);
+				if (model.onUpdate) model.onUpdate(progress);
 				if (progress === 1) this.remove(index, true);
 			} else
-			if (animation instanceof AnimationAbstract) {
-				if (animation._canRemove)
+			if (animation.type == AnimationType.GROUP) {
+				let group = animation as IAnimationGroup;
+				if (group.canRemove)
 					this.stack.splice(index, 1)
 				else
-					animation.update(frameTime);
+					group.update(frameTime);
 			}
 		}
 	}

@@ -15,6 +15,12 @@ export const enum GraphicType {
 	OBJECT
 };
 
+export const enum AnimationType {
+	ANIMATOR,
+	GROUP,
+	MODEL
+};
+
 export const Default = {
 	scene: {
 		dimension: DimensionType['3D'],

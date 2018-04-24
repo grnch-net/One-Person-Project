@@ -1,10 +1,8 @@
+import { AnimationType } from "../config";
 import { IAnimationModel, IAnimationModelParameters, IAnimationModelOnUpdate } from "./i-animation-model";
 import { IAnimationAbstract, IAddParameters } from "./i-animation-abstract";
 
 export class AnimationModel implements IAnimationModel {
-	protected _time: number = 0;
-	protected afterAnimationList: IAnimationModel[] = [];
-
 	public parent: IAnimationAbstract;
 	public active: boolean = true;
 	public timeLength: number = 0;
@@ -13,6 +11,11 @@ export class AnimationModel implements IAnimationModel {
 	public onStart: Function;
 	public onUpdate: IAnimationModelOnUpdate;
 	public onComplete: Function;
+
+	protected _time: number = 0;
+	protected afterAnimationList: IAnimationModel[] = [];
+
+	public get type(): AnimationType { return AnimationType.MODEL };
 
 	constructor(parameters: IAnimationModelParameters) {
 		if (parameters.active)		this.active = parameters.active;
@@ -35,7 +38,7 @@ export class AnimationModel implements IAnimationModel {
 		});
 	}
 
-	private timeUpdate(value: number) { this._time = value; }
+	protected timeUpdate(value: number) { this._time = value; }
 
 	public add(time: number, parameters: IAddParameters): IAnimationModel {
 		let model = this.parent.add(time, parameters);
