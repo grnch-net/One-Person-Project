@@ -7,6 +7,8 @@ import { Point } from "./../graphic/point";
 export class Camera extends GraphicPoint implements ICamera {
 	public UI: UserInterface = new UserInterface();
 	public horizontPoint: Point;
+	public viewQueue: any[] = [];
+	protected viewQueuePositions: number[] = [];
 
 	constructor(
 		public scene: any
@@ -22,6 +24,27 @@ export class Camera extends GraphicPoint implements ICamera {
 	}
 
 	public rendering(camera: Camera): boolean { return true }
+
+	public addToViewQueue(z: number, graphicObject: any): void {
+		let indexes = this.viewQueuePositions;
+		let length = indexes.length;
+
+		for (let i = 0; i < length; i++) {
+			if (z > indexes[i]) {
+				this.viewQueue.splice(i, 0, graphicObject);
+				indexes.splice(i, 0, z);
+				return;
+			}
+		}
+
+		this.viewQueue.push(graphicObject);
+		indexes.push(z);
+	}
+
+	public clearViewQueue(): void {
+		this.viewQueue = [];
+		this.viewQueuePositions = [];
+	}
 
 	public renderPoint(position: Point): number[] {
 		return [];

@@ -16,6 +16,7 @@ export interface IGraphicObject extends IGraphicPoint {
 	rotation: Point;
 	scale: Point;
 	parent: IGraphicObject;
+	globalQuaternion: Quaternion;
 	quaternion: Quaternion;
 	animation: GraphicAnimation;
 	scene: ISceneAbstract;
@@ -23,16 +24,17 @@ export interface IGraphicObject extends IGraphicPoint {
 
 export class GraphicObject extends GraphicPoint implements IGraphicObject {
 	public type: GraphicType = GraphicType.OBJECT;
+	public position: Point = new Point( this.updateLocalPosition.bind(this) );
 	public globalRotation: Point[] = [
 		new Point(null, 1,0,0),
 		new Point(null, 0,1,0),
 		new Point(null, 0,0,1)
 	];
-	public globalScale: Point = new Point(null, 1, 1, 1);
-	public position: Point = new Point( this.updateLocalPosition.bind(this) );
 	public rotation: Point = new Point( this.updateLocalRotation.bind(this) );
+	public globalScale: Point = new Point(null, 1, 1, 1);
 	public scale: Point = new Point( this.updateLocalScale.bind(this), 1, 1, 1 );
 	// public children: GraphicPoint[] = [];
+	public globalQuaternion: Quaternion = new Quaternion();
 	public quaternion: Quaternion = new Quaternion();
 	public animation: GraphicAnimation = new GraphicAnimation(this);
 	public scene: ISceneAbstract;
@@ -90,27 +92,27 @@ export class GraphicObject extends GraphicPoint implements IGraphicObject {
 		// this.globalRotation.axisX.rotate(...args);
 		// this.globalRotation.axisY.rotate(...args);
 		// this.globalRotation.axisZ.rotate(...args);
+
 		if (haveParnet) {
-			this.quaternion
-				.copy(this.parent.quaternion)
-				.multiplyEuler(this.rotation.x, this.rotation.y, this.rotation.z);
-		} else {
-			this.quaternion
-				.setFromEuler(this.rotation.x, this.rotation.y, this.rotation.z);
+			this.globalQuaternion
+				.copy(this.quaternion)
+				.multiply(this.parent.quaternion)
 		}
 
-		let matrix = this.quaternion.getMatrix();
-		this.setGlobalRotateAxis(0, ...matrix[0]);
-		this.setGlobalRotateAxis(1, ...matrix[1]);
-		this.setGlobalRotateAxis(2, ...matrix[2]);
+		let matrix = this.globalQuaternion.getMatrix();
+		this.setGlobalRotateAxis(0, ...matrix[0]); // X axis
+		this.setGlobalRotateAxis(1, ...matrix[1]); // Y axis
+		this.setGlobalRotateAxis(2, ...matrix[2]); // Z axis
 	}
 
-	protected setGlobalRotateAxis(axis: number, x?: number, y?: number, z?: number) {
+	private setGlobalRotateAxis(axis: number, x?: number, y?: number, z?: number) {
 		this.globalRotation[axis].set(x, y, z);
 	}
 
 	protected updateLocalRotation(): void {
+		this.quaternion.setFromEuler(this.rotation.x, this.rotation.y, this.rotation.z);
 		this.updateGlobalRotation();
+
 		// this.updateChildren();
 	}
 
@@ -167,6 +169,9 @@ export class GraphicObject extends GraphicPoint implements IGraphicObject {
 
 	public rendering(camera: Camera): boolean {
 		if (!this._visible) return false;
+
+		this.addToRenderingQueue(camera);
+
 		if (this.static && this.viewPosition) return false;
 
 		// if (!camera) {
@@ -175,7 +180,10 @@ export class GraphicObject extends GraphicPoint implements IGraphicObject {
 		// }
 
 		super.rendering(camera);
-		// this.children.forEach((child: GraphicPoint) => child.rendering(camera));
 		return true;
+	}
+
+	protected addToRenderingQueue(camera: Camera): void {
+		camera.addToViewQueue(this.globalPosition.z, this);
 	}
 }

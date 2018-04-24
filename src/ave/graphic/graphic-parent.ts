@@ -1,5 +1,6 @@
 import { GraphicObject, IGraphicObject } from "./graphic-object";
 import { Camera } from "./../scene/camera";
+import { GraphicType } from "./../config";
 
 export interface IGraphicParent extends IGraphicObject {
 	moveGlobalPosition(x: number, y: number, z: number): void;
@@ -12,7 +13,10 @@ export abstract class GraphicParent extends GraphicObject implements IGraphicPar
 	public children: any[] = [];
 
 	public updateChildren(): GraphicParent {
-		this.children.forEach((child) => child.update(true));
+		this.children.forEach((child) => {
+			if (!child) return;
+			child.update(true);
+		});
 		return this;
 	}
 
@@ -70,16 +74,45 @@ export abstract class GraphicParent extends GraphicObject implements IGraphicPar
 
 		let point = this.quaternion.vectorRotate({x, y, z});
 
-		this.children.forEach((child) => child.moveGlobalPosition(point.x, point.y, point.z));
+		this.children.forEach((child) => {
+			if (!child) return;
+			child.moveGlobalPosition(point.x, point.y, point.z)
+		});
 	}
 
 	public rendering(camera: Camera): boolean {
 		if (super.rendering(camera) ) {
-			this.children.forEach((child) => child.rendering(camera));
+			// if (this.type == GraphicType.OBJECT) {
+			// 	let zIndex: number;
+			// 	this.children.forEach((child) => {
+			// 		if (!child) return;
+			// 		child.rendering(camera)
+			// 		zIndex = child.globalPosition.z;
+			// 	});
+			// 	if (zIndex !== undefined) {
+			// 		this._addToRenderingQueue(zIndex, camera);
+			// 	}
+			// 	return true;
+			// }
+
+			this.children.forEach((child) => {
+				if (!child) return;
+				child.rendering(camera)
+			});
 			return true;
 		}
 
 		return false;
 	}
+
+	protected addToRenderingQueue(camera: Camera): void {
+		if (this.type == GraphicType.OBJECT) {
+			camera.addToViewQueue(this.globalPosition.z, this);
+		}
+	}
+
+	// protected _addToRenderingQueue(zIndex: number, camera: Camera): void {
+	// 	camera.addToViewQueue(zIndex, this);
+	// }
 
 }

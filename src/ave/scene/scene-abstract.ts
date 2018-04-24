@@ -87,6 +87,7 @@ export abstract class SceneAbstract implements ISceneAbstract {
 	}
 
 	public render(): void {
+		this.mainCamera.clearViewQueue();
 		this.world.rendering(this.mainCamera);
 	}
 }

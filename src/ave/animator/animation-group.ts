@@ -1,5 +1,4 @@
 import { AnimationAbstract } from "./animation-abstract";
-import { isUndefined } from "./../../utils/easy-check";
 import { AnimationModel } from "./animation-model";
 import { IAddParameters } from "./i-animation-abstract";
 
@@ -23,8 +22,8 @@ export class AnimationGroup extends AnimationAbstract implements IAnimationGroup
 
 	constructor(parameters: IAnimationGroupParameter = {}) {
 		super();
-		if (!isUndefined(parameters.active)) this.active = parameters.active;
-		if (!isUndefined(parameters.delay)) this.delay = parameters.delay;
+		if (parameters.active) this.active = parameters.active;
+		if (parameters.delay) this.delay = parameters.delay;
 	}
 
 	public createGroup(active: boolean = true): AnimationGroup {

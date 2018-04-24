@@ -6,7 +6,7 @@ import { easyHTML } from "../../utils/easy-html";
 import { easyEvent } from "../../utils/easy-event";
 
 export interface ISceneSVG extends ISceneAbstract {
-	updateDOM(): SceneSVG;
+	// updateDOM(): SceneSVG;
 }
 
 export class SceneSVG extends SceneAbstract implements ISceneSVG {
@@ -42,8 +42,7 @@ export class SceneSVG extends SceneAbstract implements ISceneSVG {
             type: 'svg',
             parent: document.body,
 			attr: {
-				// TODO: check FF
-				width: this.scene_width-1, // -1 : fix FF
+				width: this.scene_width,
 				height: this.scene_height,
 				viewBox: '0 0 '+this.scene_width+' '+this.scene_height,
 				xmlns: easyHTML.svgns
@@ -57,31 +56,35 @@ export class SceneSVG extends SceneAbstract implements ISceneSVG {
 		this.world.position.set(this.scene_width / 2, this.scene_height / 2);
     }
 
-	public updateDOM(): SceneSVG {
+	public render(): void {
+		this.mainCamera.clearViewQueue();
+		this.world.rendering(this.mainCamera);
+
+		super.render();
+		this.updateDOM();
+	}
+
+	protected updateDOM(): SceneSVG {
 		if (this.isUpdateDOM == false) {
 			this.isUpdateDOM = true;
-			requestAnimationFrame( this._updateDOM.bind(this) );
+			requestAnimationFrame( this.updateDOMAfterFrame.bind(this) );
 		}
 
 		return this;
 	}
 
-	protected _updateDOM(): void {
+	protected updateDOMAfterFrame(): void {
 		this.isUpdateDOM = false;
 		let scene = this.element;
+		let viewQueue = this.mainCamera.viewQueue;
+
 		while (scene.lastChild) {
 			scene.removeChild(scene.lastChild);
 		}
-		this.world.children.forEach( (child: any) => this.addSceneElement(child, scene) );
-	}
 
-	protected addSceneElement(anyGraphic: any, scene: HTMLElement): void {
-		if (anyGraphic.type == GraphicType.OBJECT) {
-			scene.appendChild(anyGraphic.element);
-		} else
-		if (anyGraphic.type == GraphicType.GROUP) {
-			anyGraphic.children.forEach( (child: any) => this.addSceneElement(child, scene) );
-		}
+		viewQueue.forEach( (graphicObject: any) => {
+			scene.appendChild(graphicObject.element);
+		});
 	}
 
 	// protected initEvents(): void {

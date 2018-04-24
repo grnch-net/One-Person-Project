@@ -2,7 +2,8 @@ import { IVector3d } from "./point";
 
 interface IQuaternionObject extends IQuaternion {
 	vectorRotate(v: IVector3d): IVector3d;
-	multiplyEuler(x: number, y: number, z: number): void;
+	multiply(a: IQuaternion): IQuaternion;
+	multiplyEuler(x: number, y: number, z: number): IQuaternionObject;
 	setFromEuler(x: number, y: number, z: number): void;
 	set(w: number, x: number, y: number, z: number, _n?: boolean): IQuaternionObject;
 	copy(q: IQuaternion): IQuaternionObject;
@@ -190,11 +191,29 @@ export class Quaternion implements IQuaternionObject {
 		});
 	}
 
-	public multiplyEuler(x: number, y: number, z: number): void {
+	public multiplyEuler(x: number, y: number, z: number): IQuaternionObject {
 		if (x) this.multiply(new Quaternion(1, 0, 0, x));
 		if (y) this.multiply(new Quaternion(0, 1, 0, y));
 		if (z) this.multiply(new Quaternion(0, 0, 1, z));
+
+		 // this.multiply(this.eulerToQuaternion(x, y, z));
+		 return this;
 	}
+
+	// public eulerToQuaternion(x: number, y: number, z: number): Quaternion {
+	//   var c1 = Math.cos(x / 2),
+	//     c2 = Math.cos(y / 2),
+	//     c3 = Math.cos(z / 2),
+	//     s1 = Math.sin(x / 2),
+	//     s2 = Math.sin(y / 2),
+	//     s3 = Math.sin(z / 2),
+	//     x = s1 * c2 * c3 + c1 * s2 * s3,
+	//     y = c1 * s2 * c3 - s1 * c2 * s3,
+	//     z = c1 * c2 * s3 + s1 * s2 * c3,
+	//     w = c1 * c2 * c3 - s1 * s2 * s3;
+	//
+	//   	return new Quaternion(x, y, z, w);
+	// }
 
 	public setFromEuler(x: number, y: number, z: number): void {
 		var q = new Quaternion();

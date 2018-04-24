@@ -2,7 +2,6 @@ import { AnimationAbstract } from "./animation-abstract";
 import { AnimationGroup } from "./animation-group";
 import { AnimationModel } from "./animation-model";
 import { IAddParameters } from "./i-animation-abstract";
-import { isUndefined } from "./../../utils/easy-check";
 
 export interface IAnimator {
 	active: boolean;
@@ -22,7 +21,7 @@ export class Animator extends AnimationAbstract implements IAnimator {
 		super();
 
 		this.lastTime = performance.now();
-		if (!isUndefined(parameters.active)) this._active = parameters.active;
+		if (parameters.active) this._active = parameters.active;
 
 		requestAnimationFrame(this.update.bind(this));
 	}
