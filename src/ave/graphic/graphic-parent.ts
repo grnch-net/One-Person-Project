@@ -82,27 +82,37 @@ export abstract class GraphicParent extends GraphicObject implements IGraphicPar
 
 	public rendering(camera: Camera): boolean {
 		if (super.rendering(camera) ) {
-			// TODO: code review
-			if (this.type == GraphicType.OBJECT) {
-				let zIndex: number;
-				this.children.forEach((child) => {
-					if (!child) return;
-					child.rendering(camera)
-					zIndex = child.globalPosition.z;
-				});
-				if (zIndex !== undefined) {
-					camera.addToViewQueue(zIndex, this);
-				}
-			} else {
-				this.children.forEach((child) => {
-					if (!child) return;
-					child.rendering(camera)
-				});
-			}
+			// if (this.type == GraphicType.OBJECT) {
+			// 	let zIndex: number;
+			// 	this.children.forEach((child) => {
+			// 		if (!child) return;
+			// 		child.rendering(camera)
+			// 		zIndex = child.globalPosition.z;
+			// 	});
+			// 	if (zIndex !== undefined) {
+			// 		this._addToRenderingQueue(zIndex, camera);
+			// 	}
+			// 	return true;
+			// }
+
+			this.children.forEach((child) => {
+				if (!child) return;
+				child.rendering(camera)
+			});
 			return true;
 		}
 
 		return false;
 	}
+
+	protected addToRenderingQueue(camera: Camera): void {
+		if (this.type == GraphicType.OBJECT) {
+			camera.addToViewQueue(this.globalPosition.z, this);
+		}
+	}
+
+	// protected _addToRenderingQueue(zIndex: number, camera: Camera): void {
+	// 	camera.addToViewQueue(zIndex, this);
+	// }
 
 }

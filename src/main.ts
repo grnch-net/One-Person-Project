@@ -1,4 +1,4 @@
-console.info('%c Version: 77 ', 'background: #232627; color: #bada55');
+console.info('%c Version: 79 ', 'background: #232627; color: #bada55');
 
 import { AVE } from "./ave/ave";
 

@@ -166,7 +166,9 @@ export class GraphicObject extends GraphicPoint implements IGraphicObject {
 
 	public rendering(camera: Camera): boolean {
 		if (!this._visible) return false;
-		// camera.addToViewQueue(this.globalPosition.z, this);
+
+		this.addToRenderingQueue(camera);
+
 		if (this.static && this.viewPosition) return false;
 
 		// if (!camera) {
@@ -175,7 +177,10 @@ export class GraphicObject extends GraphicPoint implements IGraphicObject {
 		// }
 
 		super.rendering(camera);
-		// this.children.forEach((child: GraphicPoint) => child.rendering(camera));
 		return true;
+	}
+
+	protected addToRenderingQueue(camera: Camera): void {
+		camera.addToViewQueue(this.globalPosition.z, this);
 	}
 }
