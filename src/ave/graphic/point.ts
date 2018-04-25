@@ -79,9 +79,7 @@ export class Point implements IPoint {
 		return this;
 	}
 	protected setAndUpdate(x: number, y: number, z: number = null): Point {
-		this._x = x;
-		this._y = y;
-		if (z !== null) this._z = z;
+		this._set(x, y, z);
 		this.update(this);
 		return this;
 	}
@@ -106,21 +104,7 @@ export class Point implements IPoint {
 		return this;
 	}
 	protected rotateAndUpdate(x: number = 0, y:number = 0, z: number = 0): Point {
-		if (z) {
-			let axisZ = this.rotate2d([this._x, this._y], z);
-			this._x = axisZ[0];
-			this._y = axisZ[1];
-		}
-		if (y) {
-			let axisY = this.rotate2d([this._x, this._z], y);
-			this._x = axisY[0];
-			this._z = axisY[1];
-		}
-		if (x) {
-			let axisX = this.rotate2d([this._z, this._y], x);
-			this._z = axisX[0];
-			this._y = axisX[1];
-		}
+		this._rotate(x, y, z);
 		this.update(this);
 		return this;
 	}
@@ -143,9 +127,7 @@ export class Point implements IPoint {
 		return this;
 	}
 	protected scaleAndUpdate(x: number = 1, y: number = 1, z: number = 1): Point {
-		this._x *= x;
-		this._y *= y;
-		this._z *= z;
+		this._scale(x, y, z);
 		this.update(this);
 		return this;
 	}
@@ -158,9 +140,7 @@ export class Point implements IPoint {
 		return this;
 	}
 	protected moveAndUpdate(x: number = 0, y: number = 0, z: number = 0): Point {
-		this._x += x;
-		this._y += y;
-		this._z += z;
+		this._move(x, y, z);
 		this.update(this);
 		return this;
 	}
@@ -173,9 +153,7 @@ export class Point implements IPoint {
 		return this;
 	}
 	protected copyAndUpdate(point: Point): Point {
-		this._x = point.x;
-		this._y = point.y;
-		this._z = point.z;
+		this._copy(point);
 		this.update(this);
 		return this;
 	}
