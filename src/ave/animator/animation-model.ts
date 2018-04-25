@@ -1,6 +1,6 @@
 import { AnimationType } from "../config";
-import { IAnimationModel, IAnimationModelParameters, IAnimationModelOnUpdate } from "./i-animation-model";
-import { IAnimationAbstract, IAddParameters } from "./i-animation-abstract";
+import { IAnimationModel, IAnimationModelParameters, IAnimationModelOnUpdate, IAddParameters } from "./i-animation-model";
+import { IAnimationAbstract } from "./i-animation-abstract";
 
 export class AnimationModel implements IAnimationModel {
 	public parent: IAnimationAbstract;

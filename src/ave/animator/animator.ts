@@ -32,8 +32,6 @@ export class Animator extends AnimationAbstract implements IAnimator {
 		super(parameters);
 
 		this.lastTime = performance.now();
-		if (parameters.active) this._active = parameters.active;
-
 		requestAnimationFrame(this.updatePerFrame.bind(this));
 	}
 

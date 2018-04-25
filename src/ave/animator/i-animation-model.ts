@@ -1,5 +1,5 @@
 import { AnimationType } from "../config";
-import { IAnimationAbstract, IAddParameters } from "./i-animation-abstract"
+import { IAnimationAbstract } from "./i-animation-abstract"
 
 export interface IAnimationModel {
 	type: AnimationType;
@@ -15,14 +15,17 @@ export interface IAnimationModel {
 	onComplete?: Function
 }
 
-export interface IAnimationModelParameters {
-	active?: boolean,
+export interface IAnimationModelParameters extends IAddParameters {
 	timeLength?: number, // millisecond
-	delay?: number, // millisecond
-	key?: string,
+}
+
+export interface IAddParameters {
+	active?: boolean,
+	delay?: number // millisecond
+	key?: string
 	onStart?: Function,
-	onUpdate?: IAnimationModelOnUpdate,
-	onComplete?: Function
+	onUpdate?(progress?: number): void,
+	onComplete?: Function,
 }
 
 export interface IAnimationModelOnUpdate {

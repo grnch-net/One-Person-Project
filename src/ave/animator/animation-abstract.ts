@@ -1,6 +1,6 @@
 import { AnimationType } from "../config";
-import { IAnimationAbstract, IAddParameters, IAnimationAbstractParameter } from "./i-animation-abstract"
-import { IAnimationModel } from "./i-animation-model";
+import { IAnimationAbstract, IAnimationAbstractParameter } from "./i-animation-abstract"
+import { IAnimationModel, IAddParameters } from "./i-animation-model";
 import { AnimationModel } from "./animation-model";
 import { IAnimationGroup } from "./animation-group";
 
@@ -13,6 +13,7 @@ export abstract class AnimationAbstract implements IAnimationAbstract {
 
 	constructor(parameters: IAnimationAbstractParameter) {
 		if (parameters.active) this.active = parameters.active;
+		if (parameters.speedMultiply) this.speedMultiply = parameters.speedMultiply;
 	}
 
 	public add(time: number = 0, parameters: IAddParameters): IAnimationModel {
@@ -59,6 +60,7 @@ export abstract class AnimationAbstract implements IAnimationAbstract {
 
 	public addGroup(group: IAnimationGroup): IAnimationGroup {
 		this.stack.push(group);
+		group.parent = this;
 		return group;
 	}
 
@@ -66,7 +68,8 @@ export abstract class AnimationAbstract implements IAnimationAbstract {
 		let index = this.stack.indexOf(group);
 
 		if (index > -1) {
-			group.canRemove = true;
+			group.parent = null;
+			this.stack.splice(index, 1)
 			return group;
 		}
 	}
@@ -95,11 +98,8 @@ export abstract class AnimationAbstract implements IAnimationAbstract {
 				if (progress === 1) this.remove(index, true);
 			} else
 			if (animation.type == AnimationType.GROUP) {
-				let group = animation as IAnimationGroup;
-				if (group.canRemove)
-					this.stack.splice(index, 1)
-				else
-					group.update(frameTime);
+				// let group = animation as IAnimationGroup;
+				(animation as IAnimationGroup).update(frameTime);
 			}
 		}
 	}

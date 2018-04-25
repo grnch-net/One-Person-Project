@@ -3,16 +3,16 @@ import { Camera } from "./../scene/camera";
 import { GraphicType } from "./../config";
 
 export interface IGraphicParent extends IGraphicObject {
-	moveGlobalPosition(x: number, y: number, z: number): void;
-	updateChildren(): GraphicParent;
-
 	children: any[];
+
+	moveGlobalPosition(x: number, y: number, z: number): void;
+	updateChildren(): IGraphicParent;
 }
 
 export abstract class GraphicParent extends GraphicObject implements IGraphicParent {
 	public children: any[] = [];
 
-	public updateChildren(): GraphicParent {
+	public updateChildren(): IGraphicParent {
 		this.children.forEach((child) => {
 			if (!child) return;
 			child.update(true);
@@ -20,6 +20,12 @@ export abstract class GraphicParent extends GraphicObject implements IGraphicPar
 		return this;
 	}
 
+	public updateLocal(): IGraphicParent {
+		super.updateLocalRotation();
+		super.updateLocalScale();
+		this.updateLocalPosition();
+		return this;
+	}
 
 	protected updateLocalRotation(): void {
 		super.updateLocalRotation();
