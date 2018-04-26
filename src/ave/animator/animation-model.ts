@@ -11,6 +11,7 @@ export class AnimationModel implements IAnimationModel {
 	public onStart: Function;
 	public onUpdate: IAnimationModelOnUpdate;
 	public onComplete: Function;
+	public _initial: Function;
 
 	protected _time: number = 0;
 	protected afterAnimationList: IAnimationModel[] = [];
@@ -51,6 +52,7 @@ export class AnimationModel implements IAnimationModel {
 		if (this.onComplete) this.onComplete();
 
 		this.afterAnimationList.forEach((model: IAnimationModel) => {
+			if (model._initial) model._initial();
 		    model.active = true;
 		});
 	}

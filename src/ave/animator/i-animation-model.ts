@@ -6,26 +6,29 @@ export interface IAnimationModel {
 	parent: IAnimationAbstract;
 	_animationComplete(): void;
 	add(time: number, parameters: IAddParameters): IAnimationModel;
-	active: boolean,
-	time: number, // millisecond
-	timeLength: number, // millisecond
-	delay: number, // millisecond
-	key?: string,
-	onUpdate?: IAnimationModelOnUpdate,
-	onComplete?: Function
+	active: boolean;
+	time: number; // millisecond
+	timeLength: number; // millisecond
+	delay: number; // millisecond
+	key?: string;
+	onUpdate?: IAnimationModelOnUpdate;
+	onComplete?: Function;
+	_initial: Function;
 }
 
 export interface IAnimationModelParameters extends IAddParameters {
-	timeLength?: number, // millisecond
+	timeLength?: number; // millisecond
 }
 
 export interface IAddParameters {
-	active?: boolean,
-	delay?: number // millisecond
-	key?: string
-	onStart?: Function,
-	onUpdate?(progress?: number): void,
-	onComplete?: Function,
+	active?: boolean;
+	delay?: number; // millisecond
+	key?: string;
+	onStart?: Function;
+	onUpdate?(progress?: number): void;
+	onComplete?: Function;
+	_initial?: Function;
+	_isInitial?: boolean;
 }
 
 export interface IAnimationModelOnUpdate {

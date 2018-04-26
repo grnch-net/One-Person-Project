@@ -56,7 +56,9 @@ export class GraphicObject extends GraphicPoint implements IGraphicObject {
 		if (value) this.scene = value.scene;
 		else this.scene = null;
 
-		this.animation.searchParent();
+		// this.animation.searchParent();
+		value.animation.addGroup(this.animation);
+
 
 		this.update();
 	}

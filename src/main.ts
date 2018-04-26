@@ -1,4 +1,4 @@
-console.info('%c Version: 80 ', 'background: #232627; color: #bada55');
+console.info('%c DEV Version: 84 ', 'background: #232627; color: #bada55');
 
 import { AVE } from "./ave/ave";
 
@@ -10,9 +10,9 @@ let scene = new AVE.Scene({ width: 800, height: 600});
 let animator = scene.animator;
 
 let group = new AVE.GraphicGroup();
-group.position.set(0, 0);
+group.position.set(0, 0, 0);
 group.scale.set(1, 1);
-group.rotation.set(0, 30, 0);
+group.rotation.set(30, 30, 30);
 scene.world.addChild(group);
 
 let createSquare = (color: string = 'black', name: string = 'square') => {
@@ -31,47 +31,51 @@ let createSquare = (color: string = 'black', name: string = 'square') => {
 let figure: any[] = [];
 
 figure[0] = createSquare('OrangeRed');
-figure[0].position.z = -150;
+figure[0].position.z = -50;
 
 figure[1] = createSquare('cyan');
-figure[1].position.z = 150;
+figure[1].position.z = 50;
 
 figure[2] = createSquare('lime');
 figure[2].rotation.y = 90;
-figure[2].position.x = -150;
+figure[2].position.x = -50;
 
 figure[3] = createSquare('DeepPink');
 figure[3].rotation.y = 90;
-figure[3].position.x = 150;
+figure[3].position.x = 50;
 
-figure[4] = createSquare('magenta');
+figure[4] = createSquare('yellow');
 figure[4].rotation.x = 90;
-figure[4].rotation.y = 90;
-figure[4].position.y = 150;
+figure[4].position.y = -50;
 
-figure[5] = createSquare('yellow');
+figure[5] = createSquare('magenta');
 figure[5].rotation.x = 90;
-figure[5].position.y = -150;
+figure[5].position.y = 50;
 
 scene.render();
 
-
-let anim = () => animator.add(10000, {
-	onUpdate: (p) => {
-		group.rotation.x = 360 * p +30;
-		group.rotation.y = 360 * p +30;
-		group.rotation.z = 360 * p +30;
-
-		let easeBack = Math.abs(1 - 2*p);
-		figure[0].position.z = -150 * easeBack -52;
-		figure[1].position.z =  150 * easeBack +52;
-		figure[2].position.x = -150 * easeBack -52;
-		figure[3].position.x =  150 * easeBack +52;
-		figure[4].position.y =  150 * easeBack +52;
-		figure[5].position.y = -150 * easeBack -52;
-
-		scene.render();
-	},
-	onComplete: anim
+group.animation.add(10000, {
+	onUpdate: (p: number) => scene.render()
+}, {
+	rotation: { x: 360 +30, y: 360 +30, z: 360 +30},
+	// scale: { x: 2, y: 2, z: 2}
 });
-anim();
+
+figure[0].animation
+	.add(5000, {}, { position: { z: -200 }})
+	.add(5000, {}, { position: { z: -50 }});
+figure[1].animation
+	.add(5000, {}, { position: { z: 200 }})
+	.add(5000, {}, { position: { z: 50 }});
+figure[2].animation
+	.add(5000, {}, { position: { x: -200 }})
+	.add(5000, {}, { position: { x: -50 }});
+figure[3].animation
+	.add(5000, {}, { position: { x: 200 }})
+	.add(5000, {}, { position: { x: 50 }});
+figure[4].animation
+	.add(5000, {}, { position: { y: -200 }})
+	.add(5000, {}, { position: { y: -50 }});
+figure[5].animation
+	.add(5000, {}, { position: { y: 200 }})
+	.add(5000, {}, { position: { y: 50 }});

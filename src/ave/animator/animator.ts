@@ -1,6 +1,7 @@
 import { AnimationType } from "../config";
 import { AnimationAbstract } from "./animation-abstract";
-import { IAnimationAbstract, IAnimationAbstractParameter, IAddParameters } from "./i-animation-abstract";
+import { IAnimationAbstract, IAnimationAbstractParameter } from "./i-animation-abstract";
+import { IAddParameters } from "./i-animation-model";
 import { AnimationGroup, IAnimationGroup } from "./animation-group";
 
 export interface IAnimator extends IAnimationAbstract {

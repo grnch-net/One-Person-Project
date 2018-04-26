@@ -2,14 +2,15 @@ import { AnimationType } from "../config";
 import { IAnimationAbstract, IAnimationAbstractParameter } from "./i-animation-abstract"
 import { IAnimationModel, IAddParameters } from "./i-animation-model";
 import { AnimationModel } from "./animation-model";
+import { IAnimationGraphicModel } from "./animation-graphic-model";
 import { IAnimationGroup } from "./animation-group";
 
 export abstract class AnimationAbstract implements IAnimationAbstract {
 	public active: boolean = true;
 	public speedMultiply: number = 1;
 
-	protected stack: (IAnimationModel | IAnimationGroup)[] = [];
-	protected keyList: { [key: string]: IAnimationModel } = {};
+	protected stack: (IAnimationModel | IAnimationGroup | IAnimationGraphicModel)[] = [];
+	protected keyList: { [key: string]: IAnimationModel | IAnimationGraphicModel } = {};
 
 	constructor(parameters: IAnimationAbstractParameter) {
 		if (parameters.active) this.active = parameters.active;
@@ -19,14 +20,15 @@ export abstract class AnimationAbstract implements IAnimationAbstract {
 	public add(time: number = 0, parameters: IAddParameters): IAnimationModel {
 		let model: IAnimationModel = new AnimationModel({ ...parameters, timeLength: time });
 
-		let key = model.key;
-		if (key) {
-			if (this.keyList[key]) this.remove(this.keyList[key]);
-			this.keyList[key] = model;
+		if (model.key) {
+			if (this.keyList[model.key]) this.remove(this.keyList[model.key] as IAnimationModel);
+			this.keyList[model.key] = model;
 		}
 
 		this.stack.push(model);
 		model.parent = this;
+
+		if (parameters._isInitial !== false && model._initial) model._initial();
 
 		return model;
 	}
@@ -84,23 +86,30 @@ export abstract class AnimationAbstract implements IAnimationAbstract {
 			if (animation.delay > 0) {
 				animation.delay -= frameTime;
 
-				if (animation.delay <= 0) {
-					frameTime -= animation.delay;
-				} else continue;
+				if (animation.delay < 0) frameTime += animation.delay;
+				else continue;
 			}
 
+			if (animation.type == AnimationType.GRAPHIC_MODEL) {
+				let graphicModel = animation as IAnimationGraphicModel;
+				let progress = this.updateModel(index, animation as IAnimationModel, frameTime);
+				graphicModel.transformation(progress);
+			} else
 			if (animation.type == AnimationType.MODEL) {
-				let model = animation as IAnimationModel;
-				model.time += frameTime;
-				let progress = model.time / model.timeLength;
-				if (progress > 1) progress = 1;
-				if (model.onUpdate) model.onUpdate(progress);
-				if (progress === 1) this.remove(index, true);
+				this.updateModel(index, animation as IAnimationModel, frameTime);
 			} else
 			if (animation.type == AnimationType.GROUP) {
-				// let group = animation as IAnimationGroup;
 				(animation as IAnimationGroup).update(frameTime);
 			}
 		}
+	}
+
+	protected updateModel(index: number, model: IAnimationModel, frameTime: number): number {
+		model.time += frameTime;
+		let progress = model.time / model.timeLength;
+		if (progress > 1) progress = 1;
+		if (model.onUpdate) model.onUpdate(progress);
+		if (progress === 1) this.remove(index, true);
+		return progress;
 	}
 }

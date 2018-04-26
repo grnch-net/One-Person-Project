@@ -1,22 +1,27 @@
 import { AnimationType } from "../config";
-import { IAnimationModel, IAnimationModelParameters, IAnimationModelOnUpdate, IAddParameters } from "./i-animation-model";
+import { IAnimationModel, IAddParameters } from "./i-animation-model";
 import { AnimationModel } from "./animation-model";
-import { IAnimationAbstract } from "./i-animation-abstract";
+import { IGraphicAnimation } from "./animation-graphic";
 import { IVector3d } from '../graphic/point';
 
 export interface IAnimationGraphicModel extends IAnimationModel {
-	graphicObjectAnimation: Function;
+	transformation: Function;
 
-	add(time: number, parameters: IAddParameters): IAnimationGraphicModel
+	add(time: number, parameters: IAddParameters, transformParameters?: IAnimationGraphicAddParameters): IAnimationGraphicModel
 }
 
 export interface IAnimationGraphicModelParameters extends IAddParameters {
 	timeLength?: number, // millisecond
 }
 
+export interface IAnimationGraphicAddParameters {
+	position?: IVector3d;
+	rotation?: IVector3d;
+	scale?: IVector3d;
+}
+
 export class AnimationGraphicModel extends AnimationModel implements IAnimationGraphicModel {
-	public parent: IAnimationAbstract;
-	public graphicObjectAnimation: Function;
+	public transformation: Function;
 
 	public get type(): AnimationType { return AnimationType.GRAPHIC_MODEL };
 
@@ -24,8 +29,13 @@ export class AnimationGraphicModel extends AnimationModel implements IAnimationG
 		super(parameters);
 	}
 
-	public add(time: number, parameters: IAddParameters): IAnimationGraphicModel {
-		let model = this.parent.add(time, parameters);
+	public add(
+		time: number,
+		parameters: IAddParameters,
+		transformParameters: IAnimationGraphicAddParameters = {}
+	): IAnimationGraphicModel {
+		parameters._isInitial = false;
+		let model = (this.parent as IGraphicAnimation).add(time, parameters, transformParameters);
 		model.active = false;
 		this.afterAnimationList.push(model);
 		return model as IAnimationGraphicModel;
