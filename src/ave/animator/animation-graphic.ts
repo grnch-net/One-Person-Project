@@ -87,12 +87,14 @@ export class GraphicAnimation extends AnimationGroup implements IGraphicAnimatio
 		start.copy(this.graphicObject.position);
 
 		let length = new Point();
-		length.copy({ x: end.x | 0, y: end.y | 0, z: end.z | 0});
-		// length.copy(end);
+		length.set(
+			(end.x !== undefined)? end.x : start.x,
+			(end.y !== undefined)? end.y : start.y,
+			(end.z !== undefined)? end.z : start.z
+		)
 		length.move(-start.x, -start.y, -start.z);
 
 		return (p: number) => {
-			console.warn();
 			this.graphicObject.position.set(
 				start.x + length.x * p,
 				start.y + length.y * p,
@@ -106,8 +108,11 @@ export class GraphicAnimation extends AnimationGroup implements IGraphicAnimatio
 		start.copy(this.graphicObject.rotation);
 
 		let length = new Point();
-		length.copy({ x: end.x | 0, y: end.y | 0, z: end.z | 0});
-		// length.copy(end);
+		length.set(
+			(end.x !== undefined)? end.x : start.x,
+			(end.y !== undefined)? end.y : start.y,
+			(end.z !== undefined)? end.z : start.z
+		)
 		length.move(-start.x, -start.y, -start.z);
 
 		return (p: number) => {
@@ -124,9 +129,13 @@ export class GraphicAnimation extends AnimationGroup implements IGraphicAnimatio
 		start.copy(this.graphicObject.scale);
 
 		let length = new Point();
-		length.copy({ x: end.x | 0, y: end.y | 0, z: end.z | 0});
-		// length.copy(end);
+		length.set(
+			(end.x !== undefined)? end.x : start.x,
+			(end.y !== undefined)? end.y : start.y,
+			(end.z !== undefined)? end.z : start.z
+		)
 		length.move(-start.x, -start.y, -start.z);
+
 
 		return (p: number) => {
 			this.graphicObject.scale.set(

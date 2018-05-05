@@ -7,6 +7,8 @@ export interface IAnimationModel {
 	_animationComplete(): void;
 	add(time: number, parameters: IAddParameters): IAnimationModel;
 	active: boolean;
+	loop: boolean;
+	yoyo: boolean;
 	time: number; // millisecond
 	timeLength: number; // millisecond
 	delay: number; // millisecond
@@ -22,6 +24,8 @@ export interface IAnimationModelParameters extends IAddParameters {
 
 export interface IAddParameters {
 	active?: boolean;
+	loop?: boolean;
+	yoyo?: boolean;
 	delay?: number; // millisecond
 	key?: string;
 	onStart?: Function;

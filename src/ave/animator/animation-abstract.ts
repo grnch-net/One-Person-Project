@@ -106,10 +106,36 @@ export abstract class AnimationAbstract implements IAnimationAbstract {
 
 	protected updateModel(index: number, model: IAnimationModel, frameTime: number): number {
 		model.time += frameTime;
-		let progress = model.time / model.timeLength;
-		if (progress > 1) progress = 1;
+
+		let progress, _progress;
+		progress = _progress = model.time / model.timeLength;
+
+		if (progress > 1) {
+			if (model.yoyo) {
+				progress = 1 - (progress -1);
+			} else {
+				progress = 1;
+			}
+		}
+
 		if (model.onUpdate) model.onUpdate(progress);
-		if (progress === 1) this.remove(index, true);
+
+		if ( (!model.yoyo &&_progress >= 1)
+			|| (model.yoyo && _progress >= 2)
+		) {
+			if (model.loop) {
+				if (model.onComplete) model.onComplete();
+
+				if (model.yoyo) {
+					model.time = model.time - model.timeLength *2;
+				} else {
+					model.time = model.time - model.timeLength;
+				}
+			} else {
+				this.remove(index, true);
+			}
+		}
+
 		return progress;
 	}
 }

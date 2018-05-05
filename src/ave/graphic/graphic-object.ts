@@ -71,7 +71,8 @@ export class GraphicObject extends GraphicPoint implements IGraphicObject {
 	}
 
 	protected updateLocalPosition() {
-		this.updateGlobalPosition();
+		// this.updateGlobalPosition();
+		this.update();
 	}
 
 	protected updateGlobalRotation(haveParnet: boolean = !!this.parent): void {

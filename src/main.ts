@@ -10,8 +10,8 @@ let scene = new AVE.Scene({ width: 800, height: 600});
 let animator = scene.animator;
 
 let group = new AVE.GraphicGroup();
-group.position.set(0, 0, 0);
-group.scale.set(1, 1);
+group.position.set(0, 0, -300);
+// group.scale.set(1.5, 1.5, 1.5);
 group.rotation.set(30, 30, 30);
 scene.world.addChild(group);
 
@@ -52,30 +52,20 @@ figure[5] = createSquare('magenta');
 figure[5].rotation.x = 90;
 figure[5].position.y = 50;
 
-scene.render();
 
-group.animation.add(10000, {
+// scene.render();
+scene.animator.add(0, {
+	loop: true,
 	onUpdate: (p: number) => scene.render()
-}, {
-	rotation: { x: 360 +30, y: 360 +30, z: 360 +30},
-	// scale: { x: 2, y: 2, z: 2}
 });
 
-figure[0].animation
-	.add(5000, {}, { position: { z: -200 }})
-	.add(5000, {}, { position: { z: -50 }});
-figure[1].animation
-	.add(5000, {}, { position: { z: 200 }})
-	.add(5000, {}, { position: { z: 50 }});
-figure[2].animation
-	.add(5000, {}, { position: { x: -200 }})
-	.add(5000, {}, { position: { x: -50 }});
-figure[3].animation
-	.add(5000, {}, { position: { x: 200 }})
-	.add(5000, {}, { position: { x: 50 }});
-figure[4].animation
-	.add(5000, {}, { position: { y: -200 }})
-	.add(5000, {}, { position: { y: -50 }});
-figure[5].animation
-	.add(5000, {}, { position: { y: 200 }})
-	.add(5000, {}, { position: { y: 50 }});
+(window as any).group = group;
+group.animation.add(10000, { loop: true, }, { rotation: { x: 360 +30, y: 360 +30, z: 360 +30} });
+group.animation.add(5000, { loop: true, yoyo: true }, { scale: { x: 0.5, y: 0.5, z: 0.5} });
+
+figure[0].animation.add(5000, { loop: true, yoyo: true }, { position: { z: -200 }})
+figure[1].animation.add(5000, { loop: true, yoyo: true }, { position: { z: 200 }})
+figure[2].animation.add(5000, { loop: true, yoyo: true }, { position: { x: -200 }})
+figure[3].animation.add(5000, { loop: true, yoyo: true }, { position: { x: 200 }})
+figure[4].animation.add(5000, { loop: true, yoyo: true }, { position: { y: -200 }})
+figure[5].animation.add(5000, { loop: true, yoyo: true }, { position: { y: 200 }})
