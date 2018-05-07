@@ -1,4 +1,4 @@
-import { IAnimationModel } from "./i-animation-model";
+import { IAnimationModel, IAddParameters } from "./i-animation-model";
 import { IAnimationGroup } from "./animation-group";
 
 export interface IAnimationAbstract {
@@ -10,15 +10,6 @@ export interface IAnimationAbstract {
 	addGroup(group: IAnimationGroup): IAnimationGroup;
 	removeGroup(group: IAnimationGroup): IAnimationGroup;
 	timeout( callback: Function, time: number, active?: boolean): IAnimationModel;
-}
-
-export interface IAddParameters {
-	active?: boolean,
-	delay?: number // millisecond
-	onStart?: Function,
-	onUpdate?(progress?: number): void,
-	onComplete?: Function,
-	key?: string
 }
 
 export interface IAnimationAbstractParameter {

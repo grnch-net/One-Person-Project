@@ -57,9 +57,10 @@ export abstract class SceneAbstract implements ISceneAbstract {
 		return easyHTML.createElement();
     }
 
-	protected createWorld(): void {
-		this.world = new World();
+	protected createWorld(world: any = World): void {
+		this.world = new world();
 		this.world.scene = this;
+		this.animator.addGroup(this.world.animation);
 	}
 
 	protected initEvents(): void {

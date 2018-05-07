@@ -1,31 +1,34 @@
 import { AnimationType } from "../config";
-import { IAnimationAbstract, IAddParameters, IAnimationAbstractParameter } from "./i-animation-abstract"
-import { IAnimationModel } from "./i-animation-model";
+import { IAnimationAbstract, IAnimationAbstractParameter } from "./i-animation-abstract"
+import { IAnimationModel, IAddParameters } from "./i-animation-model";
 import { AnimationModel } from "./animation-model";
+import { IAnimationGraphicModel } from "./animation-graphic-model";
 import { IAnimationGroup } from "./animation-group";
 
 export abstract class AnimationAbstract implements IAnimationAbstract {
 	public active: boolean = true;
 	public speedMultiply: number = 1;
 
-	protected stack: (IAnimationModel | IAnimationGroup)[] = [];
-	protected keyList: { [key: string]: IAnimationModel } = {};
+	protected stack: (IAnimationModel | IAnimationGroup | IAnimationGraphicModel)[] = [];
+	protected keyList: { [key: string]: IAnimationModel | IAnimationGraphicModel } = {};
 
 	constructor(parameters: IAnimationAbstractParameter) {
 		if (parameters.active) this.active = parameters.active;
+		if (parameters.speedMultiply) this.speedMultiply = parameters.speedMultiply;
 	}
 
 	public add(time: number = 0, parameters: IAddParameters): IAnimationModel {
 		let model: IAnimationModel = new AnimationModel({ ...parameters, timeLength: time });
 
-		let key = model.key;
-		if (key) {
-			if (this.keyList[key]) this.remove(this.keyList[key]);
-			this.keyList[key] = model;
+		if (model.key) {
+			if (this.keyList[model.key]) this.remove(this.keyList[model.key] as IAnimationModel);
+			this.keyList[model.key] = model;
 		}
 
 		this.stack.push(model);
 		model.parent = this;
+
+		if (parameters._isInitial !== false && model._initial) model._initial();
 
 		return model;
 	}
@@ -59,6 +62,7 @@ export abstract class AnimationAbstract implements IAnimationAbstract {
 
 	public addGroup(group: IAnimationGroup): IAnimationGroup {
 		this.stack.push(group);
+		group.parent = this;
 		return group;
 	}
 
@@ -66,7 +70,8 @@ export abstract class AnimationAbstract implements IAnimationAbstract {
 		let index = this.stack.indexOf(group);
 
 		if (index > -1) {
-			group.canRemove = true;
+			group.parent = null;
+			this.stack.splice(index, 1)
 			return group;
 		}
 	}
@@ -81,26 +86,56 @@ export abstract class AnimationAbstract implements IAnimationAbstract {
 			if (animation.delay > 0) {
 				animation.delay -= frameTime;
 
-				if (animation.delay <= 0) {
-					frameTime -= animation.delay;
-				} else continue;
+				if (animation.delay < 0) frameTime += animation.delay;
+				else continue;
 			}
 
+			if (animation.type == AnimationType.GRAPHIC_MODEL) {
+				let graphicModel = animation as IAnimationGraphicModel;
+				let progress = this.updateModel(index, animation as IAnimationModel, frameTime);
+				graphicModel.transformation(progress);
+			} else
 			if (animation.type == AnimationType.MODEL) {
-				let model = animation as IAnimationModel;
-				model.time += frameTime;
-				let progress = model.time / model.timeLength;
-				if (progress > 1) progress = 1;
-				if (model.onUpdate) model.onUpdate(progress);
-				if (progress === 1) this.remove(index, true);
+				this.updateModel(index, animation as IAnimationModel, frameTime);
 			} else
 			if (animation.type == AnimationType.GROUP) {
-				let group = animation as IAnimationGroup;
-				if (group.canRemove)
-					this.stack.splice(index, 1)
-				else
-					group.update(frameTime);
+				(animation as IAnimationGroup).update(frameTime);
 			}
 		}
+	}
+
+	protected updateModel(index: number, model: IAnimationModel, frameTime: number): number {
+		model.time += frameTime;
+
+		let progress, _progress;
+		progress = _progress = model.time / model.timeLength;
+
+		if (progress > 1) {
+			if (model.yoyo) {
+				progress = 1 - (progress -1);
+			} else {
+				progress = 1;
+			}
+		}
+
+		if (model.onUpdate) model.onUpdate(progress);
+
+		if ( (!model.yoyo &&_progress >= 1)
+			|| (model.yoyo && _progress >= 2)
+		) {
+			if (model.loop) {
+				if (model.onComplete) model.onComplete();
+
+				if (model.yoyo) {
+					model.time = model.time - model.timeLength *2;
+				} else {
+					model.time = model.time - model.timeLength;
+				}
+			} else {
+				this.remove(index, true);
+			}
+		}
+
+		return progress;
 	}
 }

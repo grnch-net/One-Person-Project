@@ -18,7 +18,8 @@ export const enum GraphicType {
 export const enum AnimationType {
 	ANIMATOR,
 	GROUP,
-	MODEL
+	MODEL,
+	GRAPHIC_MODEL
 };
 
 export const Default = {
