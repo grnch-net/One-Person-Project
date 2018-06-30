@@ -5,6 +5,7 @@ import { Point } from "./point";
 import { GraphicAnimation } from "../animator/animation-graphic";
 import { Camera } from "./../scene/camera";
 import { ISceneAbstract } from "./../scene/interface/i-scene-abstract";
+import { GraphicStyle } from "./graphic-style";
 
 export interface IGraphicObject extends IGraphicPoint {
 	type: GraphicType;
@@ -20,6 +21,7 @@ export interface IGraphicObject extends IGraphicPoint {
 	quaternion: Quaternion;
 	animation: GraphicAnimation;
 	scene: ISceneAbstract;
+	style: GraphicStyle;
 
 	updateLocal(): IGraphicObject;
 }
@@ -45,6 +47,8 @@ export class GraphicObject extends GraphicPoint implements IGraphicObject {
 	public static: boolean = false;
 	protected _visible: boolean = true;
 	protected _parent: IGraphicObject;
+
+	public style: GraphicStyle = new GraphicStyle(this);
 
 	get visible(): boolean { return this._visible }
 	set visible(value: boolean) { this._visible = value; this.update(); }

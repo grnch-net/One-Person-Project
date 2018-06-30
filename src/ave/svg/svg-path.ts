@@ -25,7 +25,7 @@ export class SVGPath extends SVGObject(GraphicPath) implements ISVGPath {
 			let p1 = this.children[i-2];
 			let p2 = this.children[i-1];
 			let p3 = this.children[i];
-			define += this.generateDefineElement([
+			define += this.generateDefinePath([
 				p0? p0.viewPosition: null,
 				p1? p1.viewPosition: null,
 				p2? p2.viewPosition: null,
@@ -38,7 +38,7 @@ export class SVGPath extends SVGObject(GraphicPath) implements ISVGPath {
 			let p1 = this.children[length-1];
 			let p2 = this.children[0];
 			let p3 = this.children[1];
-			define += this.generateDefineElement([
+			define += this.generateDefinePath([
 				p0? p0.viewPosition : null,
 				p1? p1.viewPosition : null,
 				p2? p2.viewPosition: null,
@@ -51,7 +51,7 @@ export class SVGPath extends SVGObject(GraphicPath) implements ISVGPath {
 		return true;
 	}
 
-	protected generateDefineElement(p: number[][]): string {
+	protected generateDefinePath(p: number[][]): string {
 		if (!p[1] && !p[2] && p[3]) return ` L ${p[3].toString()}`;
 
 		if (!p[1]) p[1] = p[0];

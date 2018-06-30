@@ -1,4 +1,4 @@
-console.info('%c DEV Version: 85 ', 'background: #232627; color: #bada55');
+console.info('%c DEV Version: 86 ', 'background: #232627; color: #bada55');
 
 import { AVE } from "./ave/ave";
 (window as any).AVE = AVE;
