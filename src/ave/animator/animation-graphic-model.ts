@@ -2,7 +2,13 @@ import { AnimationType } from "../config";
 import { IAnimationModel, IAddParameters } from "./i-animation-model";
 import { AnimationModel } from "./animation-model";
 import { IGraphicAnimation } from "./animation-graphic";
-import { IVector3d } from '../graphic/point';
+// import { IVector3d } from '../graphic/point';
+
+export interface IArgumentVector3d {
+	x?: number;
+	y?: number;
+	z?: number;
+}
 
 export interface IAnimationGraphicModel extends IAnimationModel {
 	transformation: Function;
@@ -15,9 +21,9 @@ export interface IAnimationGraphicModelParameters extends IAddParameters {
 }
 
 export interface IAnimationGraphicAddParameters {
-	position?: IVector3d;
-	rotation?: IVector3d;
-	scale?: IVector3d;
+	position?: IArgumentVector3d;
+	rotation?: IArgumentVector3d;
+	scale?: IArgumentVector3d;
 }
 
 export class AnimationGraphicModel extends AnimationModel implements IAnimationGraphicModel {

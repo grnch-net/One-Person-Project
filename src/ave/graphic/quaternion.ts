@@ -53,7 +53,7 @@ export class Quaternion implements IQuaternionObject {
 		return Math.PI/180 *value;
 	}
 
-	protected vector_normalize(x: number, y: number, z: number) {
+	protected vector_normalize(x: number, y: number, z: number): IVector3d {
 		let l = (x**2 + y**2 + z**2)**0.5;
 
 		// if (l == 0) return { x: 0, y: 0, z: 0 };
@@ -91,7 +91,7 @@ export class Quaternion implements IQuaternionObject {
 		return q.w**2 + q.x**2 + q.y**2 + q.z**2;
 	}
 
-	protected conjugate(q: IQuaternion): IQuaternion {
+	protected _conjugateAnother(q: IQuaternion): IQuaternion {
 		q.x = -q.x;
 		q.y = -q.y;
 		q.z = -q.z;
@@ -99,7 +99,7 @@ export class Quaternion implements IQuaternionObject {
 	}
 
 	protected inverse(q: IQuaternion): IQuaternion {
-		q = this.conjugate(q);
+		q = this._conjugateAnother(q);
 		let norm = this.norm(q);
 		q.w /= norm;
 		q.x /= norm;
@@ -249,25 +249,15 @@ export class Quaternion implements IQuaternionObject {
 		return m;
 	}
 
-	public init_linear_interpolation(q: IQuaternion): IQuaternion {
-		if (q._n) q = this.normalize(q);
-		let inner: number = this.w * q.w + this.x * q.x + this.y * q.y + this.z * q.z;
-		if (inner < 0) q = this.conjugate(q);
-		q.w -= this.w;
-		q.x -= this.x;
-		q.y -= this.y;
-		q.z -= this.z;
-		return q;
+	public inner_product(q1: IQuaternion ,q2: IQuaternion): number {
+		return q1.x * q2.x + q1.y * q2.y + q1.z * q2.z + q1.w * q2.w;
 	}
 
-	public linear_interpolation(t: number, q: IQuaternion): IQuaternion {
-		return {
-			w: this.w + q.w * t,
-			x: this.x + q.x * t,
-			y: this.y + q.y * t,
-			z: this.z + q.z * t,
-			_n: true
-		}
+	public conjugate(): IQuaternion {
+		this.x = -this.x;
+		this.y = -this.y;
+		this.z = -this.z;
+		return this;
 	}
 
 	// TODO: add getEulers method
