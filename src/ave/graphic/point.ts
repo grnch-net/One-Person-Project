@@ -35,10 +35,6 @@ export class Point implements IPoint {
 	) {
 
 		if (update === null) {
-			// this.x = _x;
-			// this.y = _y;
-			// this.z = _z;
-
 			delete this.update;
 
 			this.set = this._set;
