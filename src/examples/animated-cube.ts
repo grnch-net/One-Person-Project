@@ -16,12 +16,12 @@ export function animatedCube(): void {
 		let square = new AVE.GraphicPath();
 		square.name = name;
 		square.addPoint([-50, 50])
-		.addPoint([50, 50])
-		.addPoint([50, -50])
-		.addPoint([-50, -50]);
-		square.closePath = true;
-		group.addChild(square);
+			.addPoint([50, 50])
+			.addPoint([50, -50])
+			.addPoint([-50, -50])
+			.closePath = true;
 		square.style.fill = color;
+		group.addChild(square);
 		return square;
 	}
 

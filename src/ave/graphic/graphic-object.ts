@@ -70,12 +70,11 @@ export class GraphicObject extends GraphicPoint implements IGraphicObject {
 	public updateLocal(): IGraphicObject {
 		this.updateLocalPosition();
 		this.updateLocalScale();
-		this.updateLocalRotation();
+		this.updateGlobalRotation();
 		return this;
 	}
 
 	protected updateLocalPosition() {
-		// this.updateGlobalPosition();
 		this.update();
 	}
 

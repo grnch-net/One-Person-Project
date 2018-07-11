@@ -21,7 +21,7 @@ export abstract class GraphicParent extends GraphicObject implements IGraphicPar
 	}
 
 	public updateLocal(): IGraphicParent {
-		super.updateLocalRotation();
+		super.updateGlobalRotation();
 		super.updateLocalScale();
 		this.updateLocalPosition();
 		return this;
