@@ -86,20 +86,15 @@ export abstract class AnimationAbstract implements IAnimationAbstract {
 			if (animation.delay > 0) {
 				animation.delay -= frameTime;
 
-				if (animation.delay < 0) frameTime += animation.delay;
-				else continue;
+				if (animation.delay < 0) {
+					frameTime += animation.delay;
+				} else continue;
 			}
 
-			if (animation.type == AnimationType.GRAPHIC_MODEL) {
-				let graphicModel = animation as IAnimationGraphicModel;
-				let progress = this.updateModel(index, animation as IAnimationModel, frameTime);
-				graphicModel.transformation(progress);
-			} else
-			if (animation.type == AnimationType.MODEL) {
-				this.updateModel(index, animation as IAnimationModel, frameTime);
-			} else
 			if (animation.type == AnimationType.GROUP) {
 				(animation as IAnimationGroup).update(frameTime);
+			} else {
+				this.updateModel(index, animation as IAnimationModel, frameTime);
 			}
 		}
 	}
@@ -119,6 +114,9 @@ export abstract class AnimationAbstract implements IAnimationAbstract {
 		}
 
 		if (model.onUpdate) model.onUpdate(progress);
+
+		if ((model as IAnimationGraphicModel).transformation)
+			(model as IAnimationGraphicModel).transformation(progress);
 
 		if ( (!model.yoyo &&_progress >= 1)
 			|| (model.yoyo && _progress >= 2)

@@ -1,6 +1,6 @@
 import { AnimationType } from "../config";
 import { AnimationGroup, IAnimationGroup, IAnimationGroupParameter } from "./animation-group";
-import { AnimationGraphicModel, IAnimationGraphicModel, IAnimationGraphicAddParameters } from "./animation-graphic-model";
+import { AnimationGraphicModel, IAnimationGraphicModel, IAnimationGraphicAddParameters, IArgumentVector3d, ITransformRotationParameters } from "./animation-graphic-model";
 import { IAnimationModel, IAddParameters, IAnimationModelOnUpdate } from "./i-animation-model";
 import { Point } from "../graphic/point";
 
@@ -15,12 +15,6 @@ export interface IGraphicAnimation extends IAnimationGroup {
 }
 
 interface IAnimationGraphicParameter extends IAnimationGroupParameter {}
-
-interface IVector3dParameters {
-	x?: number,
-	y?: number,
-	z?: number
-}
 
 export class GraphicAnimation extends AnimationGroup implements IGraphicAnimation {
 
@@ -84,7 +78,7 @@ export class GraphicAnimation extends AnimationGroup implements IGraphicAnimatio
 		return model;
 	}
 
-	protected move(end: IVector3dParameters): IAnimationModelOnUpdate {
+	protected move(end: IArgumentVector3d): IAnimationModelOnUpdate {
 		let start = new Point();
 		start.copy(this.graphicObject.position);
 
@@ -105,7 +99,7 @@ export class GraphicAnimation extends AnimationGroup implements IGraphicAnimatio
 		}
 	}
 
-	protected scale(end: IVector3dParameters): IAnimationModelOnUpdate {
+	protected scale(end: IArgumentVector3d): IAnimationModelOnUpdate {
 		let start = new Point();
 		start.copy(this.graphicObject.scale);
 
@@ -127,7 +121,7 @@ export class GraphicAnimation extends AnimationGroup implements IGraphicAnimatio
 		}
 	}
 
-	protected rotateEuler(end: IVector3dParameters): IAnimationModelOnUpdate {
+	protected rotate(end: ITransformRotationParameters): IAnimationModelOnUpdate {
 		let start = new Point();
 		start.copy(this.graphicObject.rotation);
 
@@ -139,42 +133,87 @@ export class GraphicAnimation extends AnimationGroup implements IGraphicAnimatio
 		)
 		length.move(-start.x, -start.y, -start.z);
 
-		return (p: number) => {
-			this.graphicObject.rotation._set(
-				start.x + length.x * p,
-				start.y + length.y * p,
-				start.z + length.z * p,
-			)
+		let max_angle = length.x;
+		if (length.y > max_angle) max_angle = length.y;
+		if (length.z > max_angle) max_angle = length.z;
+
+		if (end.euler === false) {
+			let quaternion_limit = (end.angleLimit)? end.angleLimit : 90;
+			let updateQuaternion = this.rotateQuaternion(end, Math.abs(Math.ceil(max_angle/quaternion_limit)) );
+
+			return (p: number) => {
+				updateQuaternion(p);
+
+				this.graphicObject.rotation._set(
+					start.x + length.x * p,
+					start.y + length.y * p,
+					start.z + length.z * p,
+				)
+			}
+		} else {
+			return (p: number) => {
+				this.graphicObject.rotation.set(
+					start.x + length.x * p,
+					start.y + length.y * p,
+					start.z + length.z * p,
+				)
+			}
 		}
 	}
 
-	protected rotate(end: IVector3dParameters): IAnimationModelOnUpdate {
-		let start = new Quaternion();
-		start.copy(this.graphicObject.quaternion);
+	protected rotateQuaternion(end: IArgumentVector3d, amt: number): IAnimationModelOnUpdate {
+		let startEuler: Point = this.graphicObject.rotation;
+		let startList: Quaternion[] = [];
+		let lengthList: Quaternion[] = [];
 
-		let length = new Quaternion();
-		length.multiplyEuler(
-			(end.x !== undefined)? end.x : start.x,
-			(end.y !== undefined)? end.y : start.y,
-			(end.z !== undefined)? end.z : start.z
-		)
+		let startList2: Quaternion[] = [];
+		let lengthList2: Quaternion[] = [];
 
-		let inner = length.inner_product(start, length);
-		if (inner < 0) length.conjugate();
-		length.w -= start.w;
-		length.x -= start.x;
-		length.y -= start.y;
-		length.z -= start.z;
+		startList.push(new Quaternion());
+		startList[0].copy(this.graphicObject.quaternion);
 
-		let updateEulerPoint = this.rotateEuler(end);
+		for (let i=0; i<amt; i++) {
+			let start = startList[i];
 
+			let j = i+1;
+			let lengthEuler = {
+				x: (end.x !== undefined)? (end.x / amt * j) : startEuler.x,
+				y: (end.y !== undefined)? (end.y / amt * j) : startEuler.y,
+				z: (end.z !== undefined)? (end.z / amt * j) : startEuler.z
+			};
+
+			let length = new Quaternion();
+			length.multiplyEuler(lengthEuler.x, lengthEuler.y, lengthEuler.z);
+
+			let nextStart = new Quaternion();
+			nextStart.copy(length);
+			startList.push(nextStart);
+
+			let inner = length.inner_product(start, length);
+			if (inner < 0) length.conjugate();
+			length.w -= start.w;
+			length.x -= start.x;
+			length.y -= start.y;
+			length.z -= start.z;
+
+			lengthList.push(length);
+
+		}
+
+		let st = 1/amt;
 		return (p: number) => {
-			updateEulerPoint(p);
+			if (p === 1) {
+				this.graphicObject.quaternion.copy(startList[amt]);
+				return;
+			}
+
+			let i = Math.floor(amt*p);
+			let _p = (p%st) /st;
 			this.graphicObject.quaternion.set(
-				start.w + length.w * p,
-				start.x + length.x * p,
-				start.y + length.y * p,
-				start.z + length.z * p,
+				startList[i].w + lengthList[i].w * _p,
+				startList[i].x + lengthList[i].x * _p,
+				startList[i].y + lengthList[i].y * _p,
+				startList[i].z + lengthList[i].z * _p,
 				true
 			);
 		}
