@@ -147,7 +147,7 @@ export class Quaternion implements IQuaternionObject {
 	    }
 	}
 
-	public set(w: number, x: number, y: number, z: number, _n: boolean = false): IQuaternionObject {
+	public set(w: number, x: number, y: number, z: number, _n: boolean = false): Quaternion {
 		this.w = w;
 		this.x = x;
 		this.y = y;
@@ -156,7 +156,7 @@ export class Quaternion implements IQuaternionObject {
 		return this;
 	}
 
-	public copy(q: IQuaternion): IQuaternionObject {
+	public copy(q: IQuaternion): Quaternion {
 		this.w = q.w;
 		this.x = q.x;
 		this.y = q.y;
@@ -165,7 +165,7 @@ export class Quaternion implements IQuaternionObject {
 		return this;
 	}
 
-	public scale(value: number): IQuaternionObject {
+	public scale(value: number): Quaternion {
 		this.w *= value;
 		this.x *= value;
 		this.y *= value;

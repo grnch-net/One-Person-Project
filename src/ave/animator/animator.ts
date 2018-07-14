@@ -42,7 +42,7 @@ export class Animator extends AnimationAbstract implements IAnimator {
 		let frameTime = nowTime - this.lastTime;
 		this.lastTime = nowTime;
 
-		this._update(frameTime);
+		if(frameTime > 0) this._update(frameTime);
 
 		requestAnimationFrame(this.updatePerFrame.bind(this));
 	}
