@@ -6,10 +6,10 @@ var paths = {
     pages: ['src/*.html']
 };
 
-gulp.task("copy-html", function () {
+const copyHtml = () => {
 	return gulp.src(paths.pages)
 	.pipe(gulp.dest("dist"));
-});
+}
 
 let isWath = false;
 
@@ -34,12 +34,12 @@ if (isWath) {
 		.pipe(gulp.dest("dist"));
 	}
 
-	gulp.task("default", ["copy-html"], bundle);
+	exports.default = gulp.series(copyHtml, bundle);
 	watchedBrowserify.on("update", bundle);
 	watchedBrowserify.on("log", gutil.log);
 } else {
 	// ------- Browserify
-	gulp.task("default", ["copy-html"], function () {
+	const build = () => {
 		return browserify({
 			basedir: '.',
 			debug: true,
@@ -51,5 +51,6 @@ if (isWath) {
 		.bundle()
 		.pipe(source('bundle.js'))
 		.pipe(gulp.dest("dist"));
-	});
+	}
+	exports.default = gulp.series(copyHtml, build);
 }
